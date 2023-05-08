@@ -6,16 +6,7 @@
 \usepackage{amsmath,amsthm,amsfonts,amssymb}
 \usepackage{color,graphicx,overpic}
 \usepackage{hyperref}
-
-\usepackage{lipsum}
-
-\pdfinfo{
-  /Title (example.pdf)
-  /Creator (TeX)
-  /Producer (pdfTeX 1.40.0)
-  /Author (Seamus)
-  /Subject (Example)
-  /Keywords (pdflatex, latex,pdftex,tex)}
+\usepackage[dvipsnames]{xcolor}
 
 % This sets page margins to .5 inch if using letter paper, and to 1cm
 % if using A4 paper. (This probably isn't strictly necessary.)
@@ -59,12 +50,16 @@
 
 %My Environments
 \newtheorem{example}[section]{Example}
+
+\newcommand{\Blue}[1]{\noindent{\textbf{\textcolor{Blue}{#1}} -}}
+\newcommand{\Red}[1]{\noindent{\textbf{\textcolor{BrickRed}{#1}} -}}
+\newcommand{\Green}[1]{\noindent{\textbf{\textcolor{PineGreen}{#1}} -}}
 % -----------------------------------------------------------------------
 
 \begin{document}
 \raggedright
 \footnotesize
-\begin{multicols}{5}
+\begin{multicols}{4}
 
 
 % multicol parameters
@@ -76,17 +71,7 @@
 \setlength{\columnsep}{2pt}
 
 \input{topics/math}
-
-\section{Section 1}
-\lipsum
-\subsection{xCode}
-Subsetction text \lipsum
-
-\section{Section 2}
-Text 2
-
-\section{Section 3}
-Etc.
+\input{topics/games}
 
 \end{multicols}
 \end{document}

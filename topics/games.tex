@@ -1,0 +1,152 @@
+\newcommand{\agentcolor}[1]{\textcolor{Mahogany}{#1}}
+\newcommand{\oppcolor}[1]{\textcolor{MidnightBlue}{#1}}
+\newcommand{\chancecolor}[1]{\textcolor{ForestGreen}{#1}}
+\newcommand{\dcolor}[1]{\textcolor{Fuchsia}{#1}}
+
+\section{Games}
+
+\Blue{Game tree} describes the possibilities of a game and models opponents \&
+randomness. Each node is a decision point for a player; each root-to-leaf path
+is a possible outcome of the game.  Legend: \agentcolor{$\bigtriangleup$ -
+maximizing node}, \oppcolor{$\bigtriangledown$ - minimizing node}, and
+\chancecolor{$\bigcirc$ - chance node}
+
+\Blue{Two-player zero-sum game} Each state is fully observed and such that
+players take turns; utility of the agent is negative the utility of the opponent
+(so the sum of the two utilities is zero).\\
+\textbf{$\text{Players}$}: $ = \{\agentcolor{\text{agent}}, \oppcolor{\text{opp}}\}$\\
+\textbf{$s_{start}$}: start state\\
+\textbf{$\text{Actions}(s)$}: possible actions from state $s$\\
+\textbf{$\text{Succ}(s, a)$}: resulting state if choose action $a$ in state $s$\\
+\textbf{$\text{IsEnd}(s)$}: whether $s$ is an end state\\
+\textbf{$\text{Utility}(s)$}: agent's utility for end state $s$\\
+\textbf{$\text{Player}(s)$}: player who controls the state $s$\\
+
+\Green{Types of policies}\\
+\textbf{Stochastic policies}: $\pi_{p}(s, a) \in \left[0, 1\right]$
+\underline{probability} of player $p$ taking action $a$ in state $s$.\\
+\textbf{Deterministic policies}: $\pi_{p}(s) \in \text{Actions}(s)$ action that
+player $p$ takes in state $s$. A (special) instance of Stochastic policies.\\
+
+\Blue{Game evaluation} analogous to recurrence for policy evaluation in MDPs.
+$V_{\text{eval}}(s) = \begin{cases}
+    \text{Utility}(s) & \text{IsEnd}(s) \\
+    \sum_{a \in \text{A}(s)} \pi_{\text{ag}}(s, a) V_{\text{eval}}(\text{Suc}(s, a)) & \text{Player}(s) = \text{ag} \\
+    \sum_{a \in \text{A}(s)} \pi_{\text{op}}(s, a) V_{\text{eval}}(\text{Suc}(s, a)) & \text{Player}(s) = \text{op} \\
+\end{cases}$
+
+As the agent, we want to solve \agentcolor{$\pi_{\text{agent}}(s, a)$}: the best
+thing we should do.
+
+\Green{Expectimax} $V_{\text{exptmax}}(s)$ is the max expected utility of any
+agent policy when playing w.r.t. a \emph{fixed and known}
+\oppcolor{$\pi_{\text{opp}}$}.
+$V_{\text{exptmax}}(s) = \begin{cases}
+    \text{Utility}(s) & \text{IsEnd}(s) \\
+    \agentcolor{\max_{a \in \text{A}(s)}} V_{\text{e-m}}(\text{Suc}(s, a)) & \text{Player}(s) = \text{ag} \\
+    \sum_{a \in \text{A}(s)} \pi_{\text{op}}(s, a) V_{\text{e-m}}(\text{Suc}(s, a)) & \text{Player}(s) = \text{op} \\
+\end{cases}$ \\
+$\Rightarrow \underline{\agentcolor{\pi_{\text{exptmax}(7)}},
+\oppcolor{\pi_{\text{7}}}}$ (assuming the fixed opponent policy
+$\oppcolor{\pi_{\text{opp}}}$ is $\oppcolor{\pi_{\text{7}}}$, then the the best
+policy computed by expectimax recurrence for agent is denoted as
+$\agentcolor{\pi_{\text{exptmax}(7)}}$).
+
+\Blue{Minimax} Find an optimal agent policy against an adversary by assuming the
+worst case: the opponent does everything to minimize the agent's utility.
+$V_{\text{minimax}}(s) = \begin{cases}
+    \text{Utility}(s) & \text{IsEnd}(s) \\
+    \agentcolor{\max_{a \in \text{A}(s)}} V_{\text{m-m}}(\text{Suc}(s, a)) & \text{Player}(s) = \text{ag} \\
+    \oppcolor{\min_{a \in \text{A}(s)}} V_{\text{m-m}}(\text{Suc}(s, a)) & \text{Player}(s) = \text{op} \\
+\end{cases}$\\
+$\Rightarrow \underline{\agentcolor{\pi_{\text{max}}}, \oppcolor{\pi_{\text{min}}}}$:
+$\agentcolor{\pi_{\text{max}}(s)} = \arg \max_{a \in \text{A}(s)} V_{\text{minimax}}(\text{Suc}(s, a))$\\
+$\oppcolor{\pi_{\text{min}}(s)} = \arg \min_{a \in \text{A}(s)} V_{\text{minimax}}(\text{Suc}(s, a))$\\
+
+\Red{Minimax properties} we can play an agent policy
+$\agentcolor{\pi_{\text{agent}}}$ against an opponent policy
+$\oppcolor{\pi_{\text{opp}}}$, which produces an expected utility via game
+evaluation, denoted as $V(\agentcolor{\pi_{\text{agent}}},
+\oppcolor{\pi_{\text{opp}}})$
+\begin{enumerate}
+    \item if the agent were to change its policy from $\pi_{\text{max}}$ to any
+        $\pi_{\text{agent}}$, then the agent wouldn't be better off (and in
+        general, worse off). \fbox{$\forall \agentcolor{\pi_{\text{agent}}},
+        V(\agentcolor{\pi_{\text{max}}}, \oppcolor{\pi_{\text{min}}}) \ge
+        V(\agentcolor{\pi_{\text{agent}}}, \oppcolor{\pi_{\text{min}}})$}
+    \item if the opponent were to change its policy from $\pi_{\text{min}}$ to
+        any $\pi_{\text{opp}}$, then the opponent wouldn't be better off (the
+        value of the game can only increase, which is favorable to the agent).
+        \fbox{$\forall \oppcolor{\pi_{\text{opp}}},
+        V(\agentcolor{\pi_{\text{max}}}, \oppcolor{\pi_{\text{min}}}) \le
+        V(\agentcolor{\pi_{\text{max}}}, \oppcolor{\pi_{\text{opp}}})$}
+        From the agent's point of view, this can be interpreted as guarding
+        against the worst case $\Rightarrow$ If $V_{\text{minimax}}(s) = 1$, the
+        agent is guaranteed at least a value of 1 no matter what the opponent
+        does.
+    \item if the opponent is known to be not adversarial, then the minimax
+        policy might not be optimal for the agent.
+        \fbox{For $\oppcolor{\pi_{\text{7}}}$, $V(\agentcolor{\pi_{\text{max}}},
+        \oppcolor{\pi_{\text{7}}}) \le V(\agentcolor{\pi_{\text{exptmax}(7)}},
+        \oppcolor{\pi_{\text{7}}})$}
+\end{enumerate}
+\begin{displaymath}
+\begin{split}
+V(\agentcolor{\pi_{\text{exptmax}(7)}}, \oppcolor{\pi_{\text{min}}}) &\le V(\agentcolor{\pi_{\text{max}}}, \oppcolor{\pi_{\text{min}}}) \\
+&\le V(\agentcolor{\pi_{\text{max}}}, \oppcolor{\pi_{\text{opp}}}) \\
+&\le V(\agentcolor{\pi_{\text{exptmax}(7)}}, \oppcolor{\pi_{\text{7}}})
+\end{split}
+\end{displaymath}
+
+\Blue{Expectiminimax} \textbf{$\text{Players}$}: $ =
+\{\agentcolor{\text{agent}}, \oppcolor{\text{opp}},
+\chancecolor{\text{coin}}\}$: a third player representing any sort of natural
+randomness (metaphorically ``coin'') is introduced which always follows a known
+stochastic policy.
+$V_{\text{exptminmax}}(s) = \begin{cases}
+    \text{Utility}(s) & \text{IsEnd}(s) \\
+    \agentcolor{\max_{a \in \text{A}(s)}} V_{\text{e-m-m}}(\text{Suc}(s, a)) & \text{Player}(s) = \agentcolor{\text{ag}} \\
+    \oppcolor{\min_{a \in \text{A}(s)}} V_{\text{e-m-m}}(\text{Suc}(s, a)) & \text{Player}(s) = \oppcolor{\text{op}} \\
+    \chancecolor{\sum_{a \in \text{A}(s)} \pi_{\text{co}(s,a)}} V_{\text{e-m-m}}(\text{Suc}(s, a)) & \text{Player}(s) = \chancecolor{\text{co}}
+\end{cases}$
+
+\subsection*{Speeding up minimax}
+
+\Green{Depth-limited tree search} Stop at maximum depth $d_{\text{max}}$. Use:
+at state $s$, call $V_{\text{minmax}}(s, d_{\text{max}})$. Convention: decrement
+depth at last player's turn.
+$V_{\text{minmax}}(s, \dcolor{d}) = \begin{cases}
+    \text{Utility}(s) & \text{IsEnd}(s) \\
+    \dcolor{\text{Eval}(s)} & \dcolor{d = 0}\\
+    \agentcolor{\max_{a \in \text{A}(s)}} V_{\text{e-m-m}}(\text{Suc}(s, a), \dcolor{d}) & \text{Player}(s) = \agentcolor{\text{ag}} \\
+    \oppcolor{\min_{a \in \text{A}(s)}} V_{\text{e-m-m}}(\text{Suc}(s, a), \dcolor{d-1}) & \text{Player}(s) = \oppcolor{\text{op}} \\
+\end{cases}$
+
+\Green{Evaluation function} a domain-specific and possibly very weak estimate of
+the value $V_{\text{minmax}}(s)$, analogous to $A^\star$'s
+$\text{FutureCost}(s)$ but unlike $A^\star$ no guarantees on the error from
+approximation.
+
+\Green{Depth-limited exhaustive search} $O(b^{2d})$ time. Still not ideal.
+
+\Red{Optimal path} path that minimax policies take. Values of all the nodes on
+path are the same.
+
+\Blue{Alpha-beta pruning} a domain-general exact method optimizing the minimax
+algorithm by avoiding the unnecessary exploration of parts of the game tree. To
+do so, each player keeps track of the best value they can hope for (stored in
+$\alpha$ for the maximizing player and in $\beta$ for the minimizing player). At
+a given step, $\beta < \alpha \Rightarrow$ the optimal path is \underline{not}
+going to be in the current branch as the earlier player had a better option at
+their disposal.
+
+Order matters:
+\begin{itemize}
+    \item Worst ordering: $O(b^{2d})$ time
+    \item Best ordering: $O(b^{2\cdot0.5d})$ time
+    \item Random ordering: $O(b^{2\cdot0.75d})$ time when $b = 2$
+\end{itemize}
+In practice, can use $\text{Eval}(s)$:\begin{itemize}
+    \item on a max node, order successorts by decreasing $\text{Eval}(s')$
+    \item on a min node, order successorts by increasing $\text{Eval}(s')$
+\end{itemize}
