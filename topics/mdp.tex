@@ -1,0 +1,19 @@
+\section{Markov decision processes}
+
+Find the maximum value policy by using MDPs that help us cope with randomeness
+and uncertainty, in order to find our way between an initial state and an end
+state.
+
+\subsection{Notations}
+
+\Blue{Definition} the objective of a MDP is to maximize rewards.\begin{itemize}
+    \item States $S$: including $S_\text{start}$
+    \item Termination state: $\text{IsEnd}(s)$
+    \item $\text{Actions}(s)$
+    \item $\text{Reward}(s,a,s')$
+    \item Transition probabilities $T(s,a,s')$ ($\forall s,a, \sum_{s'\in S} T(s,a,s') \equiv 1$)
+    \item Discount: $0 \le \gamma \le 1$ (usually default 1)
+\end{itemize}
+
+\Blue{Policy} $\pi$ is a function that maps each state $s$ to an action $a \in
+\text{Actions}(s)$
