@@ -3,7 +3,7 @@
 \newcommand{\chancecolor}[1]{\textcolor{ForestGreen}{#1}}
 \newcommand{\dcolor}[1]{\textcolor{Fuchsia}{#1}}
 
-\section{Games}
+\subsection{Games}
 
 \Blue{Game tree} describes the possibilities of a game and models opponents \&
 randomness. Each node is a decision point for a player; each root-to-leaf path
@@ -110,7 +110,7 @@ $V_{\text{exptminmax}}(s) = \begin{cases}
     \chancecolor{\sum_{a \in \text{A}(s)} \pi_{\text{co}(s,a)}} V_{\text{e-m-m}}(\text{Suc}(s, a)) & \text{Playr}(s) = \chancecolor{\text{co}}
 \end{cases}$
 
-\subsection{Speeding up minimax}
+\subsubsection{Speeding up minimax}
 
 \Green{Depth-limited tree search} Stop at maximum depth $d_{\text{max}}$. Use:
 at state $s$, call $V_{\text{minmax}}(s, d_{\text{max}})$. Convention: decrement
@@ -181,7 +181,7 @@ $T(s,a,s')$. \textbf{TD learning}: operates on $\hat{V_\pi}(s;\mathbf{w})$,
 \underline{on-policy} (value is based on exploration policy), and \textbf{needs
 to know rules of the game $\text{Succ}(s,a)$}.
 
-\subsection{Simultaneous games}
+\subsubsection{Simultaneous games}
 
 On the contrary of turn-based games, no ordering on the player's moves in
 simultaneous games.
@@ -210,7 +210,7 @@ game with a finite number of actions:
 \oppcolor{\min_{\pi_B}} \agentcolor{\max_{\pi_A}} V(\pi_A, \pi_B)$} where
 $\pi_A$, $\pi_B$ range over \textbf{mixed strategies}.
 
-\subsection{Non-zero games}
+\subsubsection{Non-zero games}
 
 \Blue{Payoff matrix} utility for player $p$: $V_p(\pi_A, \pi_B)$.\\
 \Red{Nash equilibrium} $(\pi_A^\star, \pi_B^\star)$ such that no player has an
