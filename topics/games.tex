@@ -31,8 +31,8 @@ player $p$ takes in state $s$. A (special) instance of Stochastic policies.\\
 \Blue{Game evaluation} analogous to recurrence for policy evaluation in MDPs.
 $V_{\text{eval}}(s) = \begin{cases}
     \text{Utility}(s) & \text{IsEnd}(s) \\
-    \sum_{a \in \text{A}(s)} \pi_{\text{ag}}(s, a) V_{\text{eval}}(\text{Suc}(s, a)) & \text{Player}(s) = \text{ag} \\
-    \sum_{a \in \text{A}(s)} \pi_{\text{op}}(s, a) V_{\text{eval}}(\text{Suc}(s, a)) & \text{Player}(s) = \text{op} \\
+    \sum_{a \in \text{A}(s)} \pi_{\text{ag}}(s, a) V_{\text{eval}}(\text{Suc}(s, a)) & \text{Playr}(s) = \text{ag} \\
+    \sum_{a \in \text{A}(s)} \pi_{\text{op}}(s, a) V_{\text{eval}}(\text{Suc}(s, a)) & \text{Playr}(s) = \text{op} \\
 \end{cases}$
 
 As the agent, we want to solve \agentcolor{$\pi_{\text{agent}}(s, a)$}: the best
@@ -43,8 +43,8 @@ agent policy when playing w.r.t. a \emph{fixed and known}
 \oppcolor{$\pi_{\text{opp}}$}.
 $V_{\text{exptmax}}(s) = \begin{cases}
     \text{Utility}(s) & \text{IsEnd}(s) \\
-    \agentcolor{\max_{a \in \text{A}(s)}} V_{\text{e-m}}(\text{Suc}(s, a)) & \text{Player}(s) = \text{ag} \\
-    \sum_{a \in \text{A}(s)} \pi_{\text{op}}(s, a) V_{\text{e-m}}(\text{Suc}(s, a)) & \text{Player}(s) = \text{op} \\
+    \agentcolor{\max_{a \in \text{A}(s)}} V_{\text{e-m}}(\text{Suc}(s, a)) & \text{Playr}(s) = \text{ag} \\
+    \sum_{a \in \text{A}(s)} \pi_{\text{op}}(s, a) V_{\text{e-m}}(\text{Suc}(s, a)) & \text{Playr}(s) = \text{op} \\
 \end{cases}$ \\
 $\Rightarrow \underline{\agentcolor{\pi_{\text{exptmax}(7)}},
 \oppcolor{\pi_{\text{7}}}}$ (assuming the fixed opponent policy
@@ -56,8 +56,8 @@ $\agentcolor{\pi_{\text{exptmax}(7)}}$).
 worst case: the opponent does everything to minimize the agent's utility.
 $V_{\text{minimax}}(s) = \begin{cases}
     \text{Utility}(s) & \text{IsEnd}(s) \\
-    \agentcolor{\max_{a \in \text{A}(s)}} V_{\text{m-m}}(\text{Suc}(s, a)) & \text{Player}(s) = \text{ag} \\
-    \oppcolor{\min_{a \in \text{A}(s)}} V_{\text{m-m}}(\text{Suc}(s, a)) & \text{Player}(s) = \text{op} \\
+    \agentcolor{\max_{a \in \text{A}(s)}} V_{\text{m-m}}(\text{Suc}(s, a)) & \text{Playr}(s) = \text{ag} \\
+    \oppcolor{\min_{a \in \text{A}(s)}} V_{\text{m-m}}(\text{Suc}(s, a)) & \text{Playr}(s) = \text{op} \\
 \end{cases}$\\
 $\Rightarrow \underline{\agentcolor{\pi_{\text{max}}}, \oppcolor{\pi_{\text{min}}}}$:
 $\agentcolor{\pi_{\text{max}}(s)} = \arg \max_{a \in \text{A}(s)} V_{\text{minimax}}(\text{Suc}(s, a))$\\
@@ -67,7 +67,7 @@ $\oppcolor{\pi_{\text{min}}(s)} = \arg \min_{a \in \text{A}(s)} V_{\text{minimax
 $\agentcolor{\pi_{\text{agent}}}$ against an opponent policy
 $\oppcolor{\pi_{\text{opp}}}$, which produces an expected utility via game
 evaluation, denoted as $V(\agentcolor{\pi_{\text{agent}}},
-\oppcolor{\pi_{\text{opp}}})$
+\oppcolor{\pi_{\text{opp}}})$\\
 \begin{enumerate}
     \item if the agent were to change its policy from $\pi_{\text{max}}$ to any
         $\pi_{\text{agent}}$, then the agent wouldn't be better off (and in
@@ -105,12 +105,12 @@ randomness (metaphorically ``coin'') is introduced which always follows a known
 stochastic policy.
 $V_{\text{exptminmax}}(s) = \begin{cases}
     \text{Utility}(s) & \text{IsEnd}(s) \\
-    \agentcolor{\max_{a \in \text{A}(s)}} V_{\text{e-m-m}}(\text{Suc}(s, a)) & \text{Player}(s) = \agentcolor{\text{ag}} \\
-    \oppcolor{\min_{a \in \text{A}(s)}} V_{\text{e-m-m}}(\text{Suc}(s, a)) & \text{Player}(s) = \oppcolor{\text{op}} \\
-    \chancecolor{\sum_{a \in \text{A}(s)} \pi_{\text{co}(s,a)}} V_{\text{e-m-m}}(\text{Suc}(s, a)) & \text{Player}(s) = \chancecolor{\text{co}}
+    \agentcolor{\max_{a \in \text{A}(s)}} V_{\text{e-m-m}}(\text{Suc}(s, a)) & \text{Playr}(s) = \agentcolor{\text{ag}} \\
+    \oppcolor{\min_{a \in \text{A}(s)}} V_{\text{e-m-m}}(\text{Suc}(s, a)) & \text{Playr}(s) = \oppcolor{\text{op}} \\
+    \chancecolor{\sum_{a \in \text{A}(s)} \pi_{\text{co}(s,a)}} V_{\text{e-m-m}}(\text{Suc}(s, a)) & \text{Playr}(s) = \chancecolor{\text{co}}
 \end{cases}$
 
-\subsection*{Speeding up minimax}
+\subsection{Speeding up minimax}
 
 \Green{Depth-limited tree search} Stop at maximum depth $d_{\text{max}}$. Use:
 at state $s$, call $V_{\text{minmax}}(s, d_{\text{max}})$. Convention: decrement
@@ -118,8 +118,8 @@ depth at last player's turn.
 $V_{\text{minmax}}(s, \dcolor{d}) = \begin{cases}
     \text{Utility}(s) & \text{IsEnd}(s) \\
     \dcolor{\text{Eval}(s)} & \dcolor{d = 0}\\
-    \agentcolor{\max_{a \in \text{A}(s)}} V_{\text{e-m-m}}(\text{Suc}(s, a), \dcolor{d}) & \text{Player}(s) = \agentcolor{\text{ag}} \\
-    \oppcolor{\min_{a \in \text{A}(s)}} V_{\text{e-m-m}}(\text{Suc}(s, a), \dcolor{d-1}) & \text{Player}(s) = \oppcolor{\text{op}} \\
+    \agentcolor{\max_{a \in \text{A}(s)}} V_{\text{e-m-m}}(\text{Suc}(s, a), \dcolor{d}) & \text{Playr}(s) = \agentcolor{\text{ag}} \\
+    \oppcolor{\min_{a \in \text{A}(s)}} V_{\text{e-m-m}}(\text{Suc}(s, a), \dcolor{d-1}) & \text{Playr}(s) = \oppcolor{\text{op}} \\
 \end{cases}$
 
 \Green{Evaluation function} a domain-specific and possibly very weak estimate of
@@ -150,3 +150,72 @@ In practice, can use $\text{Eval}(s)$:\begin{itemize}
     \item on a max node, order successorts by decreasing $\text{Eval}(s')$
     \item on a min node, order successorts by increasing $\text{Eval}(s')$
 \end{itemize}
+
+\Blue{Temporal difference (TD) learning} picks a piece of experience
+$(s,a,r,s')$ and updates $\mathbf{w}$. Used when we don't know the transitions /
+rewards. The value is based on exploration policy.\\
+Evaluation function could be hand-crafted but also learned from data:
+$\text{Eval}(s) = V(s;\mathbf{w}) = \mathbf{w}\cdot\phi(s)$ (linear).\\
+\begin{displaymath}
+\begin{split}
+    &\mathbf{w} \leftarrow \mathbf{w} - \eta \\
+    &\left[\textcolor{red}{\underbrace{\hat{V_\pi}(s;\mathbf{w})}_{\text{prediction}}}
+    - \textcolor{Green}{\underbrace{(r + \gamma
+    \hat{V_\pi}(s';\mathbf{w}))}_{\text{target}}}\right]
+    \textcolor{blue}{\nabla_{\mathbf{w}}\hat{V_\pi}(s;\mathbf{w})}
+\end{split}
+\end{displaymath}
+For linear functions: $\textcolor{red}{V(s;\mathbf{w})} = \mathbf{w} \cdot
+\phi(s)$; $\textcolor{blue}{\nabla_{\mathbf{w}}V(s;\mathbf{w})} = \phi(s)$.
+\fbox{
+    $\mathbf{w} \leftarrow \mathbf{w} -
+    \eta\left[\textcolor{red}{\mathbf{w} \cdot \phi(s)} - \textcolor{Green}{(r + \gamma
+    \mathbf{w} \cdot \phi(s'))}\right]\textcolor{blue}{\phi(s)}$
+}\\
+Feature selection: how good my ``board'' is.
+
+\Blue{TD learning vs Q-learning} \textbf{Q-learning} operates on
+$\hat{Q}_{\text{opt}}(s,a;\mathbf{w})$, \underline{off-policy} (value based on
+estimate of optimal policy), and doesn't need to know MDP transitions
+$T(s,a,s')$. \textbf{TD learning}: operates on $\hat{V_\pi}(s;\mathbf{w})$,
+\underline{on-policy} (value is based on exploration policy), and \textbf{needs
+to know rules of the game $\text{Succ}(s,a)$}.
+
+\subsection{Simultaneous games}
+
+On the contrary of turn-based games, no ordering on the player's moves in
+simultaneous games.
+
+\Green{Single-move simultaneous game} \textbf{Players} $= \left\{A, B\right\}$
+with given possible actions. \textbf{$V(a,b)$}: \textbf{\underline{A's} utility}
+if $A$ chooses action $a$ and $B$ chooses action $b$. \textbf{Payoff matrix}: $V
+\in |\text{Actions}|^2$.
+
+\Red{Pure strategy} just a single action: \fbox{$a \in \text{Actions}$}.
+\Red{Mixed strategy} a probability distribution over actions:
+\fbox{$\forall a \in \text{Actions}, 0 \le \pi(a) \le 1$}. Examples:
+\begin{itemize}
+    \item Fixed, always show ``1'': $\pi = [1,0]$
+    \item Fixed, always show ``2'': $\pi = [0,1]$
+    \item Mixed, uniformly random: $\pi = [\frac{1}{2}, \frac{1}{2}]$
+\end{itemize}
+
+\Blue{Game evaluation} the \underline{value} of the game if player $A$ follows
+$\pi_A$ and player $B$ follows $\pi_B$:
+\fbox{$V(\pi_A, \pi_B) = \sum_{a,b}\pi_A(a)\pi_B(b)V(a,b)$}
+
+\Red{von Neumann minimax theorem} for every simultaneous two-player zero-sum
+game with a finite number of actions:
+\fbox{$\agentcolor{\max_{\pi_A}} \oppcolor{\min_{\pi_B}} V(\pi_A, \pi_B) =
+\oppcolor{\min_{\pi_B}} \agentcolor{\max_{\pi_A}} V(\pi_A, \pi_B)$} where
+$\pi_A$, $\pi_B$ range over \textbf{mixed strategies}.
+
+\subsection{Non-zero games}
+
+\Blue{Payoff matrix} utility for player $p$: $V_p(\pi_A, \pi_B)$.\\
+\Red{Nash equilibrium} $(\pi_A^\star, \pi_B^\star)$ such that no player has an
+incentive to change their strategy:
+\fbox{$\forall \pi_A, V_A(\pi_A^\star, \pi_B^\star) \ge V_A(\pi_A, \pi_B^\star)$} and
+\fbox{$\forall \pi_B, V_B(\pi_A^\star, \pi_B^\star) \ge V_B(\pi_A^\star, \pi_B)$}.
+\Blue{Nash's existence theorem} in any finite-player game with finite number of
+actions, there exists \textbf{at least one} Nash equilibrium.

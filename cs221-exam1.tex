@@ -4,6 +4,7 @@
 \usepackage{ifthen}
 \usepackage[landscape]{geometry}
 \usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{mathtools}
 \usepackage{color,graphicx,overpic}
 \usepackage{hyperref}
 \usepackage[dvipsnames]{xcolor}
@@ -36,6 +37,11 @@
                                 {1ex plus .2ex}%
                                 {\normalfont\small\bfseries}}
 \makeatother
+
+% Itemize to use less space
+\usepackage{enumitem}
+\setlist{nosep}
+\setenumerate{nosep}
 
 % Define BibTeX command
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
