@@ -2,16 +2,14 @@
 
 Find the maximum value policy by using MDPs that help us cope with randomness
 and uncertainty, in order to find our way between an initial state and an end
-state.
+state. (Goal: maximize rewards)
 
 \subsubsection{Notations}
 
-\Blue{Definition} the objective of a MDP is to maximize rewards.\begin{itemize}
-    \item States $S$: including $S_\text{start}$
-    \item Termination state: $\text{IsEnd}(s)$
-    \item $\text{Actions}(s)$
-    \item $\text{Reward}(s,a,s')$
-    \item Transition probabilities $T(s,a,s')$ ($\forall s,a, \sum_{s'\in S} T(s,a,s') \equiv 1$)
+\Blue{Definition} based on Search definition:
+\begin{itemize}
+    \item $\text{Reward}(s,a,s')$ (replacing $\text{Cost}(s,a)$)
+    \item $T(s,a,s')$: $\forall s,a, \sum_{s'\in S} T(s,a,s') \equiv 1$ (replacing $\text{Succ}(s,a)$)
     \item Discount: \emph{(living in the moment "greedy algo")} $0 \le \gamma \le 1$ \emph{(save for the future)}
 \end{itemize}
 Search is a special case of MDP where $T(s,a,s') = \begin{cases}

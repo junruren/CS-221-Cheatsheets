@@ -1,5 +1,24 @@
 \subsection{Search}
 
+\Blue{Definition} by doing action $a$ from state $s$, we deterministically
+arrive in state $\text{Succ}(s,a)$. Goal: determine a sequence of actions
+between $s_{\text{start}}$ and an end state on a minumum cost path.
+\begin{itemize}
+    \item $S_\text{start}$
+    \item $\text{IsEnd}(s)$: whether an end state was reached
+    \item $\text{Actions}(s)$: possible actions from state $s$
+    \item $\text{Cost}(s,a)$: action cost
+    \item $\text{Succ}(s,a)$ of state $s$ after action $a$
+\end{itemize}
+
+\Red{State} a summary of all past actions sufficient to choose future actions optimally.
+
+\begin{itemize}
+    \item \textbf{Explored}: states for which the optimal path has been found
+    \item \textbf{Frontier}: states seen for which we are still figuring out how to get there with the cheapest cost
+    \item \textbf{Unexplored}: states not yet seen
+\end{itemize}
+
 \subsubsection{Tree search}
 
 \Red{Algorithms} $b$: \# actions per state; $d$: solution depth, and $D$:
@@ -19,14 +38,6 @@ maximum depth.
 \end{tabular}
 
 \subsubsection{Graph search}
-
-\Red{State} a summary of all past actions sufficient to choose future actions optimally.
-
-\begin{itemize}
-    \item \textbf{Explored}: states for which the optimal path has been found
-    \item \textbf{Frontier}: states seen for which we are still figuring out how to get there with the cheapest cost
-    \item \textbf{Unexplored}: states not yet seen
-\end{itemize}
 
 \Blue{Dynamic programming (DP)} a Backtracting search algorithm that only works
 for acyclic graphs.
