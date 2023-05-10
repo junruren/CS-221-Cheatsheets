@@ -1,6 +1,6 @@
 \subsection{Markov decision processes}
 
-Find the maximum value policy by using MDPs that help us cope with randomeness
+Find the maximum value policy by using MDPs that help us cope with randomness
 and uncertainty, in order to find our way between an initial state and an end
 state.
 
@@ -12,8 +12,208 @@ state.
     \item $\text{Actions}(s)$
     \item $\text{Reward}(s,a,s')$
     \item Transition probabilities $T(s,a,s')$ ($\forall s,a, \sum_{s'\in S} T(s,a,s') \equiv 1$)
-    \item Discount: $0 \le \gamma \le 1$ (usually default 1)
+    \item Discount: \emph{(living in the moment "greedy algo")} $0 \le \gamma \le 1$ \emph{(save for the future)}
 \end{itemize}
+Search is a special case of MDP where $T(s,a,s') = \begin{cases}
+    1 & s' = \text{Succ}(s,a) \\
+    0 & \text{otherwise}
+\end{cases}$
 
 \Blue{Policy} $\pi$ is a function that maps each state $s$ to an action $a \in
-\text{Actions}(s)$
+\text{Actions}(s)$. Following a policy yields a random path.
+
+\Green{Utility (of a policy $\pi$ / path)} the (discounted) sum of the rewards on the
+path, making it a random variable.
+$\text{u}(\pi) = \sum_{i=0}^{\infty} \gamma^i \text{Reward}(s_i, \pi(s_i), s_i + 1)$
+
+\Green{Value (of a policy $\pi$ at state $s_0$)} the expected utility received by
+following policy $\pi$ from state $s$ over random paths; randomness comes from
+$T(s,a,s')$ and possibly $\pi$. $V_\pi(s) = Q_\pi(s,\pi(s))$
+
+\Blue{$Q$-value} the expected utility of a ``chance node'' (taking action $a$ from
+state $s$ \underline{and then} following $\pi$).
+$Q_\pi(s,a)
+= \underbrace{\sum_{s'}T(s,a,s') \text{Reward}(s,a,s')}_{\text{exp'd rwd of taking (s, a)}}
++ \underbrace{\sum_{s'}T(s,a,s') \gamma V_\pi(s')}_{\text{(discntd) exp'd future rwd}}$
+\underline{$V_\pi(s) = 0$ if $\text{IsEnd}(s)$};
+otherwise a recurrence:
+\begin{displaymath}
+\boxed{
+\begin{aligned}
+    &V_\pi(s) = Q_\pi(s,\pi(s)) \\
+    =&\sum_{s'}T(s,\pi(s),s')\left[\text{Reward}(s,\pi(s),s') + \gamma V_\pi(s')\right]
+\end{aligned}
+}
+\end{displaymath}
+
+\subsubsection{Algorithms}
+
+\Red{Policy evaluation} iteratively computes $V_\pi$ (given \underline{a
+specific} policy $\pi$).
+\begin{itemize}
+    \item \textbf{Initialization}: \fbox{$\forall s, V_\pi^{(0)}(s) \leftarrow 0$}
+    \item \textbf{Iteration} $t = 1,\dots,T_{PE}$:\\
+        $\forall s$ (for each state), \fbox{$V_\pi^{(t)}(s) \leftarrow Q_\pi^{(t-1)}(s,\pi(s))$}
+        with \begin{displaymath}
+            \boxed{
+                \begin{aligned}
+                    &Q_\pi^{(t-1)}(s,\pi(s)) = \sum_{s'}T(s,\pi(s),s')\\
+                    &\left[\text{Reward}(s,\pi(s),s') + \gamma V_\pi^{(t-1)}(s')\right]
+                \end{aligned}
+            }
+        \end{displaymath}
+    \item until values don't change much: \fbox{$\max_{s \in S} |V_\pi^{(t)}(s) - V_\pi^{(t-1)}(s)| \le \epsilon$}
+        (error tolerance)
+\end{itemize}
+Time complexity $O(T_{PE}|S||S'|)$ ($|S|$: \# of states; $|S'|$: \# of $s'$ with $T(s,a,s') > 0$)
+
+\Blue{Optimal $Q$-value (of state $s$ with action $a$)} the maximum $Q$-value
+attained by any policy taken after taking action $a$ from state $s$.
+\begin{displaymath}
+\boxed{
+\begin{aligned}
+    Q_{opt}(s,a) =& \sum_{s'}T(s,a,s')\\
+    &\left[\text{Reward}(s,a,s') + \gamma V_{opt}(s')\right]
+\end{aligned}
+}
+\end{displaymath}
+
+\Blue{Optimal value (of state $s$)} the maximum value attained by any policy.
+\underline{$V_{opt}(s) = 0$ if $\text{IsEnd}(s)$};
+otherwise \fbox{$V_{opt}(s) = \max_{a \in A(s)} Q_{opt}(s,a)$}
+
+\Blue{Optimal policy (of state $s$)} (``opt'' is still a policy!) the policy that leads
+to the optimal values.
+$\forall s$ \fbox{$\pi_{opt}(s) = \arg\max_{a \in A(s)} Q_{opt}(s,a)$}
+
+\Red{Value iteration} finds $V_{opt}(s)$ and therefore $\pi_{opt}(s)$. \textbf{\underline{Off-policy}}
+\begin{itemize}
+    \item \textbf{Initialization}: \fbox{$\forall s, V_{opt}^{(0)}(s) \leftarrow 0$}
+    \item \textbf{Iteration} $t = 1,\dots,T_{VI}$:\\
+        $\forall s$ (for each state), \fbox{$V_{opt}^{(t)}(s) \leftarrow \max_{a \in A(s)} Q_{opt}^{t-1}(s,a)$}
+        with \begin{displaymath}
+            \boxed{
+                \begin{aligned}
+                    &Q_{opt}^{t-1}(s,a) = \sum_{s'}T(s,a,s')\\
+                    &\left[\text{Reward}(s,a,s') + \gamma V_{opt}^{(t-1)}(s')\right]
+                \end{aligned}
+            }
+        \end{displaymath}
+    \item VI convergence guaranteed by
+        \textbf{either $\gamma < 1$ or the MDP graph being acyclic}.
+\end{itemize}
+Time complexity $O(T_{VI}|S||A||S'|)$ ($|S|$: \# of states; $|A|$: \# of
+actions per state; $|S'|$: \# of $s'$ with $T(s,a,s') > 0$)
+
+\subsubsection{Reinforcement Learning}
+
+Dealing with unknown $T$ and $\text{Rewards}$.
+
+\Blue{MDPs (offline)} have a mental model of the world; find
+$\pi_{opt}$ to maximize rewards collected.\\
+\Blue{RL (online)} don't know how the world works;
+perform actions to find out and collect rewards.
+
+\Green{On-policy} estimate the value of a data-generating (exploration)
+policy (usually to get $Q_{\pi}$).\\
+\Green{Off-policy} estimate the value of another policy (usually to get
+$Q_{opt}$).
+
+\Red{Model-based value iteration} estimates $T(s,a,s')$ and
+$\text{Reward}(s,a,s')$ using findings from explorations:
+\fbox{$\hat{T}(s,a,s') = \frac{\text{\# times }(s,a,s')\text{ occurs}}{\text{\# times }(s,a)\text{ occurs}}$}
+and \fbox{$\hat{\text{Reward}}(s,a,s') = r \text{ in } (s,a,r,s')$}.
+These estimations can then be used to deduce $Q$-values ($\hat{Q}_\pi$ and $\hat{Q}_{opt}$).
+
+\Red{Model-based Monte Carlo} \emph{randomly} traverses the space for
+aforementioned Model-based value iteration. \textbf{\underline{Off-policy}}
+because we explore the space arbitrarily to find $\pi_{opt}$, independently from
+an exact policy.
+
+\Red{Model-free Monte Carlo} directly estimates $Q_\pi$.
+\fbox{$\hat{Q}_\pi(s,a) =$ average of $u_t$ where $s_{t-1} = s, a_t = a$}
+($u_t$: the utility starting at step $t$ of a given episode).
+\textbf{\underline{On-policy}} because the estimated value is dependent
+on the policy $\pi$ used to generate the data.
+
+\textbf{Convex combination formula} - for each $(s,a,u)$ of the training set and by
+introducing \fbox{$\eta = \frac{1}{1 + (\text{\# updates to } (s,a))}$}:
+\begin{displaymath}
+\boxed{
+\begin{aligned}
+    \hat{Q}_\pi(s,a) \leftarrow & \hat{Q}_\pi(s,a) - \eta \left[
+        \textcolor{red}{\underbrace{\hat{Q}_\pi(s,a)}_{\text{prediction}}}
+        - \textcolor{Green}{\underbrace{u}_{\text{target}}}
+    \right]
+\end{aligned}
+}
+\end{displaymath}
+Issue: reaching state-action pair $(s_{t-1}, a_t)$ required the sum until
+termination ($u_t = \sum_{i=0}^{\infty}\gamma^i r_{t+1}$) just for a signle
+update.
+
+\Green{SARSA} estimate $Q_\pi$ by using both raw data (observed $r$) and
+prediction (estimate of $\hat{Q}_\pi$) as part of the update rule. For each
+tuple $(s,a,r,s',a')$ in the sequence of exploration via $\pi$
+(\textbf{\underline{on-policy}}):
+\begin{displaymath}
+\boxed{
+\begin{aligned}
+    \hat{Q}_\pi(s,a) \leftarrow & \hat{Q}_\pi(s,a) \\
+    &- \eta \left[
+        \textcolor{red}{\underbrace{\hat{Q}_\pi(s,a)}_{\text{prediction}}}
+        - \textcolor{Green}{\underbrace{r}_{\text{data}} + \gamma \underbrace{\hat{Q}_\pi(s',a')}_{\text{estimate}}}
+    \right]
+\end{aligned}
+}
+\end{displaymath}
+SARSA estimate is updated on the fly as opposed to the model-free MC estimate
+where the estimate can only be updated at teh end of the episode.
+
+\Blue{$Q$-learning} (\textbf{\underline{off-policy}}) produces an estimate for
+$Q_{opt}$. For each $(s,a,r,s',a')$:
+\begin{displaymath}
+\boxed{
+\begin{aligned}
+    \hat{Q}_{opt}(s,a) \leftarrow \hat{Q}_{opt}(s,a) \\
+    - \eta \left[
+        \textcolor{red}{\underbrace{\hat{Q}_{opt}(s,a)}_{\text{prediction}}}
+        - \textcolor{Green}{\underbrace{(r + \gamma \max_{a' \in A(s')}\hat{Q}_{opt}(s',a'))}_{\text{target}}}
+    \right]
+\end{aligned}
+}
+\end{displaymath}
+
+\Green{Exploration vs Exploitation}
+\begin{itemize}
+    \item Too greedy (always picking the best action): won't explore everywhere
+    \item Too much exploring: learn too slowly
+\end{itemize}
+
+\Green{Epsilon-greedy policy} an algorithm that balances exploration with
+probability $\epsilon$ and exploration with probability $1-\epsilon$. For a
+given state $s$, the policy is computed as:
+\fbox{
+    $\pi_{act}(s) = \begin{cases}
+        \arg\max_{a \in A(s)} \hat{Q}_{opt}(s,a) & 1-\epsilon\\
+        \text{random action from } A(s) & \epsilon
+    \end{cases}$
+}
+
+\Blue{$Q$-learning with function approximation} avoid memorizing every state as
+$\hat{Q}_{opt}(s,a)$ just maps $(s,a)$ to a value estimate so define
+$\hat{Q}_{opt}(s,a; \mathbf{w}) = \mathbf{w} \cdot \phi(s,a)$ where the learned
+$\mathbf{w}$ can replace the mapping table.
+For each $(s,a,r,s',a')$:
+\begin{displaymath}
+\boxed{
+\begin{aligned}
+    \mathbf{w} \leftarrow \mathbf{w} - \eta \\
+    \left[
+        \textcolor{red}{\underbrace{\hat{Q}_{opt}(s,a; \mathbf{w})}_{\text{prediction}}}
+        - \textcolor{Green}{\underbrace{(r + \gamma \max_{a' \in A(s')}\hat{Q}_{opt}(s',a'; \mathbf{w}))}_{\text{target}}}
+    \right] \\
+    \phi(s,a)
+\end{aligned}
+}
+\end{displaymath}

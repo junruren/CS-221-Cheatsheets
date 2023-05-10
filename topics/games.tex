@@ -13,14 +13,16 @@ maximizing node}, \oppcolor{$\bigtriangledown$ - minimizing node}, and
 
 \Blue{Two-player zero-sum game} Each state is fully observed and such that
 players take turns; utility of the agent is negative the utility of the opponent
-(so the sum of the two utilities is zero).\\
-\textbf{$\text{Players}$}: $ = \{\agentcolor{\text{agent}}, \oppcolor{\text{opp}}\}$\\
-\textbf{$s_{start}$}: start state\\
-\textbf{$\text{Actions}(s)$}: possible actions from state $s$\\
-\textbf{$\text{Succ}(s, a)$}: resulting state if choose action $a$ in state $s$\\
-\textbf{$\text{IsEnd}(s)$}: whether $s$ is an end state\\
-\textbf{$\text{Utility}(s)$}: agent's utility for end state $s$\\
-\textbf{$\text{Player}(s)$}: player who controls the state $s$\\
+(so the sum of the two utilities is zero).
+\begin{itemize}
+    \item $\text{Players}$: $ = \{\agentcolor{\text{agent}}, \oppcolor{\text{opp}}\}$
+    \item $s_{start}$: start state
+    \item $\text{Actions}(s)$: possible actions from state $s$
+    \item $\text{Succ}(s, a)$: resulting state if choose action $a$ in state $s$
+    \item $\text{IsEnd}(s)$: whether $s$ is an end state
+    \item $\text{Utility}(s)$: agent's utility for end state $s$
+    \item $\text{Player}(s)$: player who controls the state $s$
+\end{itemize}
 
 \Green{Types of policies}\\
 \textbf{Stochastic policies}: $\pi_{p}(s, a) \in \left[0, 1\right]$
@@ -147,8 +149,8 @@ Order matters:
     \item Random ordering: $O(b^{2\cdot0.75d})$ time when $b = 2$
 \end{itemize}
 In practice, can use $\text{Eval}(s)$:\begin{itemize}
-    \item on a max node, order successorts by decreasing $\text{Eval}(s')$
-    \item on a min node, order successorts by increasing $\text{Eval}(s')$
+    \item on a max node, order successors by decreasing $\text{Eval}(s')$
+    \item on a min node, order successors by increasing $\text{Eval}(s')$
 \end{itemize}
 
 \Blue{Temporal difference (TD) learning} picks a piece of experience
