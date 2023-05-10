@@ -48,7 +48,12 @@ or $0$ if at end state.
 PastCost$(s)$, assuming \textbf{all action costs are non-negative}. Adding a
 positive constant to all costs would make a \emph{different} problem.
 
-\Red{Algorithms} $N$: \# total states; $n$ \# states explored before $s_{end}$.
+\Red{Correctness theorem} when a state $s$ is popped from the frontier and moved
+to explored, its priority being $\text{PastCost}(s)$ is the minimum cost path
+$S_\text{start} \rightarrow s$.
+
+\Red{Algorithms} $N$: \# total states; $n$ \# states explored before $s_{end}$;
+assume const \# actions per state.
 
 \begin{tabular}{|c|c|c|c|} 
     \hline
@@ -59,3 +64,40 @@ positive constant to all costs would make a \emph{different} problem.
     UCS & Ok & $c \ge 0$ & $O(n \log(n))$ \\
     \hline
 \end{tabular}
+
+\Green{Heuristic func} each $h(s)$ estimates $\text{FutureCost}(s)$ (cost of $s
+\rightarrow s_{\text{end}}$ path). \fbox{$h(s) \le \text{FutureCost}(s)$} $\Rightarrow$
+$h$ is \textcolor{Green}{admissible}.
+
+\Red{$A\star$ search} a biased version of UCS explores states in increasing
+order of $\text{PastCost}(s) + h(s)$ (states closer to the end state).
+\fbox{$\text{Cost}'(s,a) = \text{Cost}(s,a) + h(\text{Succ}(s,a)) - h(s)$}
+which's used in UCS when enqueuing $s'$ with current state priority +
+$\text{Cost}'$.
+
+\Blue{Consistency} $h$ is consistent if
+\fbox{$h(s_{\text{end}}) = 0$} \underline{\&\&}
+\fbox{$\forall s,a$ $h(s) \le \text{Cost}(s,a) + h(\text{Succ}(s,a))$}.
+\Red{Theorem} \fbox{$h(s)$ consistent $\Rightarrow$ $h(s)$ admissible}
+
+\Red{Correctness} $h$ is consistent $\Rightarrow$ $A\star$ returns the min cost path.
+
+\Red{Efficiency} $A\star$ explores all states satisfying:
+\fbox{$\text{PastCost}(s) \le \text{PastCost}(s_{\text{end}}) - h(s)$}
+
+\Green{Relaxed search problem} search problem $P$ with $\text{Cost}$ relaxed
+into $P_\text{rel}$ with $\text{Cost}_\text{rel}$, where
+\fbox{$\text{Cost}_\text{rel}(s,a) \le \text{Cost}(s,a)$}
+
+\Red{Relaxed heuristic} $h(s) = \text{FutureCost}_\text{rel}(s)$ as the min cost
+path $s \rightarrow s_{\text{end}}$ in the graph of
+$\text{Cost}_\text{rel}(s,a)$.
+\fbox{$h(s) = \text{FutureCost}_\text{rel}(s) \Rightarrow h(s)$ consistent}
+
+\Green{Choosing heuristic} balance two aspects:
+\begin{itemize}
+    \item Easy to compute $h(s) = \text{FutureCost}_\text{rel}(s)$: it has to
+        produce a closed form, easier search and independent subproblems.
+    \item Good enough approximation: $h(s)$ should be close to
+        $\text{FutureCost}$, thus not removing too many constraints.
+\end{itemize}
