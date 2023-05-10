@@ -119,16 +119,13 @@ policy (usually to get $Q_{\pi}$).\\
 \Green{Off-policy} estimate the value of another policy (usually to get
 $Q_{opt}$).
 
-\Red{Model-based value iteration} estimates $T(s,a,s')$ and
-$\text{Reward}(s,a,s')$ using findings from explorations:
+\Red{Model-based Monte Carlo} estimates $T(s,a,s')$ and $\text{Reward}(s,a,s')$
+using findings from \emph{randomly} traversing the space:
 \fbox{$\hat{T}(s,a,s') = \frac{\text{\# times }(s,a,s')\text{ occurs}}{\text{\# times }(s,a)\text{ occurs}}$}
 and \fbox{$\hat{\text{Reward}}(s,a,s') = r \text{ in } (s,a,r,s')$}.
 These estimations can then be used to deduce $Q$-values ($\hat{Q}_\pi$ and $\hat{Q}_{opt}$).
-
-\Red{Model-based Monte Carlo} \emph{randomly} traverses the space for
-aforementioned Model-based value iteration. \textbf{\underline{Off-policy}}
-because we explore the space arbitrarily to find $\pi_{opt}$, independently from
-an exact policy.
+\textbf{\underline{Off-policy}} because we explore the space arbitrarily to find
+$\pi_{opt}$, independently from an exact policy.
 
 \Red{Model-free Monte Carlo} directly estimates $Q_\pi$.
 \fbox{$\hat{Q}_\pi(s,a) =$ average of $u_t$ where $s_{t-1} = s, a_t = a$}
