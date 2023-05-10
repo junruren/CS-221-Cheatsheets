@@ -133,12 +133,12 @@ approximation.
 path are the same.
 
 \Blue{Alpha-beta pruning} a domain-general exact method optimizing the minimax
-algorithm by avoiding the unnecessary exploration of parts of the game tree. To
-do so, each player keeps track of the best value they can hope for (stored in
-$\alpha$ for the maximizing player and in $\beta$ for the minimizing player). At
-a given step, $\beta < \alpha \Rightarrow$ the optimal path is \underline{not}
-going to be in the current branch as the earlier player had a better option at
-their disposal.
+algorithm. Lower bound of max node $s$ value (\agentcolor{$\ge a_s$});
+upper bound of min node $s$ value (\oppcolor{$\le b_s$}).
+\agentcolor{$\alpha_s =$ max of all max node ancestors' \agentcolor{$a$}};
+\oppcolor{$\beta_s =$ min of all min node ancestors' \oppcolor{$b$}}.
+\fbox{Prune when $\alpha_s > \beta_s$}
+\Hint{Left subtree usually un-pruned to get global optima}.
 
 Order matters:
 \begin{itemize}

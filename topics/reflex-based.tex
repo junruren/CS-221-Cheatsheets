@@ -1,0 +1,12 @@
+\subsection{Reflex-based models}
+\Blue{$k$-means} with initial centroids $\mu_1,\dots,\mu_K \in \mathbb{R}^n$,
+repeat until convergence:
+assign each point $i=1,\dots,n$ \fbox{$z_i \leftarrow \arg \min_{k=1,\dots,K}||\phi(s_i) - \mu_k||^2$}
+and then recenter each cluster $k=1,\dots,K$
+\fbox{$\mu_k \leftarrow \frac{\text{all points in this cluster sumed}}{\text{\# points in this cluster}}$}.
+$k$-means is guaranteed to converge to a local (not global) optima even with
+random initialization of centroids. Solution: run multiple times with different
+random init or init with heuristic.
+
+\Red{$k$-means objective func}
+\fbox{$\text{L}_{k\text{-means}}(z,\mu) = \sum_{i=1}^{n}||\phi(x_i) - \mu_{z_i}||^2$}

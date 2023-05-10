@@ -64,19 +64,20 @@ assume const \# actions per state.
 \end{tabular}
 
 \Green{Heuristic func} each $h(s)$ estimates $\text{FutureCost}(s)$ (cost of $s
-\rightarrow s_{\text{end}}$ path). \fbox{$h(s) \le \text{FutureCost}(s)$} $\Rightarrow$
-$h$ is \textcolor{Green}{admissible}.
+\rightarrow s_{\text{end}}$ path).
+\fbox{$h(s) \le \text{FutureCost}(s)$ $\Rightarrow$ $h(s)$ \textcolor{Green}{admissible}}
+\fbox{$h(s)$ consistent $\Rightarrow$ $h(s)$ \textcolor{Green}{admissible}}
 
-\Red{$A\star$ search} a biased version of UCS explores states in increasing
-order of $\text{PastCost}(s) + h(s)$ (states closer to the end state).
+\Red{$A\star$ search} \Hint{first modify path costs and then run UCS}:
 \fbox{$\text{Cost}'(s,a) = \text{Cost}(s,a) + h(\text{Succ}(s,a)) - h(s)$}
-which's used in UCS when enqueuing $s'$ with current state priority +
-$\text{Cost}'$.
 
 \Blue{Consistency} $h$ is consistent if
 \fbox{$h(s_{\text{end}}) = 0$} \underline{\&\&}
-\fbox{$\forall s,a$ $h(s) \le \text{Cost}(s,a) + h(\text{Succ}(s,a))$}.
-\Red{Theorem} \fbox{$h(s)$ consistent $\Rightarrow$ $h(s)$ admissible}
+\fbox{$\forall s,a$ $h(s) \le \text{Cost}(s,a) + h(\text{Succ}(s,a))$}
+(if not true, modified path cost can be negative!).
+If multiple heuristics are consistent, \textbf{max of them} is better:
+guaranteed consistency and the largest possible heuristic value leads to fewer
+states visited overall.
 
 \Red{Correctness} $h$ is consistent $\Rightarrow$ $A\star$ returns the min cost path.
 
@@ -94,8 +95,7 @@ $\text{Cost}_\text{rel}(s,a)$.
 
 \Green{Choosing heuristic} balance two aspects:
 \begin{itemize}
-    \item Easy to compute $h(s) = \text{FutureCost}_\text{rel}(s)$: it has to
-        produce a closed form, easier search and independent subproblems.
-    \item Good enough approximation: $h(s)$ should be close to
-        $\text{FutureCost}$, thus not removing too many constraints.
+    \item Easy to compute $h(s) = \text{FutureCost}_\text{rel}(s)$.
+    \item $h(s)$ should be close to $\text{FutureCost}$, thus not removing too
+        many constraints.
 \end{itemize}
