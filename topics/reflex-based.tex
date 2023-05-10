@@ -1,4 +1,16 @@
-\subsection{Reflex-based models}
+\Red{TranLoss} \Hint{$\frac{1}{|D_{\text{train}}|}$} sum(each data Loss).
+
+\subsubsection{Linear classification}
+\Red{Score $\mathbf{w}\cdot\phi(s)$} how confident we are in predicting $+1$\\
+\Green{Margin $(\mathbf{w}\cdot\phi(s))y$} how correct we are. Loss func should
+be the inverse of margin.
+
+\Green{Approximation error} how far the entire hypothesis class is from the target predictor.
+\Hint{$\uparrow$ \# weight params $\Rightarrow$ $\uparrow$ hypothesis class $\Rightarrow$ $\uparrow$ app err}.\\
+\Green{Estimation error} how good the predictor $\hat{f}$ is w.r.t. the best
+predictor $f^\star$ of the hypothesis class.
+\Hint{$\downarrow$ hypothesis class $\Rightarrow$ $\uparrow$ est err}.
+
 \Blue{$k$-means} with initial centroids $\mu_1,\dots,\mu_K \in \mathbb{R}^n$,
 repeat until convergence:
 assign each point $i=1,\dots,n$ \fbox{$z_i \leftarrow \arg \min_{k=1,\dots,K}||\phi(s_i) - \mu_k||^2$}

@@ -140,16 +140,12 @@ upper bound of min node $s$ value (\oppcolor{$\le b_s$}).
 \fbox{Prune when $\alpha_s > \beta_s$}
 \Hint{Left subtree usually un-pruned to get global optima}.
 
-Order matters:
-\begin{itemize}
-    \item Worst ordering: $O(b^{2d})$ time
-    \item Best ordering: $O(b^{2\cdot0.5d})$ time
-    \item Random ordering: $O(b^{2\cdot0.75d})$ time when $b = 2$
-\end{itemize}
-In practice, can use $\text{Eval}(s)$:\begin{itemize}
-    \item on a max node, order successors by decreasing $\text{Eval}(s')$
-    \item on a min node, order successors by increasing $\text{Eval}(s')$
-\end{itemize}
+Order matters: Worst ordering: $O(b^{2d})$ time; Best ordering:
+$O(b^{2\cdot0.5d})$ time; Random ordering: $O(b^{2\cdot0.75d})$ time when $b =
+2$
+In practice, can use $\text{Eval}(s)$: on a max node, order successors by
+decreasing $\text{Eval}(s')$; on a min node, order successors by increasing
+$\text{Eval}(s')$
 
 \Blue{Temporal difference (TD) learning} picks a piece of experience
 $(s,a,r,s')$ and updates $\mathbf{w}$. Used when we don't know the transitions /

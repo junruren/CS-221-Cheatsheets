@@ -8,7 +8,7 @@ state.
 \begin{itemize}
     \item $\text{Reward}(s,a,s')$
     \item $T(s,a,s')$: $\forall s,a, \sum_{s'\in S} T(s,a,s') \equiv 1$
-    \item Discount: \emph{(living in the moment ``greedy algo'')} $0 \le \gamma \le 1$ \emph{(save for the future)}
+    \item Discount: \emph{(immediate reward)} $0 \le \gamma \le 1$ \emph{(long-term)}
 \end{itemize}
 Search is a special case of MDP where $T(s,a,s') = \begin{cases}
     1 & s' = \text{Succ}(s,a) \\
@@ -123,7 +123,7 @@ policy-following) traversing the space:
 \fbox{$\hat{T}(s,a,s') = \frac{\text{\# times }(s,a,s')\text{ occurs}}{\text{\# times }(s,a)\text{ occurs}}$}
 and \fbox{$\hat{\text{Reward}}(s,a,s') = r \text{ in } (s,a,r,s')$}.
 $\hat{T} \hat{R}$ can then be used to deduce $Q$-values ($\hat{Q}_\pi$ and
-$\hat{Q}_{opt}$).
+$\hat{Q}_{opt}$). \Hint{Need more experience to reliably estimate}.
 
 \Red{Model-free Monte Carlo (on-policy)} directly estimates $Q_\pi$.
 \fbox{$\hat{Q}_\pi(s,a) =$ average of $u_t$ where $s_{t-1} = s, a_t = a$}
@@ -179,14 +179,11 @@ $(s,a,r,s',a')$:
 }
 \end{displaymath}
 
-\Green{Exploration vs Exploitation}
-\begin{itemize}
-    \item Too greedy (always picking the best action): won't explore everywhere
-    \item Too much exploring: learn too slowly
-\end{itemize}
+\Green{Exploration vs Exploitation} Too greedy (always picking the best action):
+won't explore everywhere; Too much exploring: learn too slowly
 
-\Green{Epsilon-greedy policy} an algorithm that balances exploration with
-probability $\epsilon$ and exploration with probability $1-\epsilon$. For a
+\Green{Epsilon-greedy policy} a data-generating policy that balances exploration
+with probability $\epsilon$ and exploration with probability $1-\epsilon$. For a
 given state $s$, the policy is computed as:
 \fbox{
     $\pi_{act}(s) = \begin{cases}
@@ -194,6 +191,7 @@ given state $s$, the policy is computed as:
         \text{random action from } A(s) & \epsilon
     \end{cases}$
 }
+\Hint{Let $\epsilon$ decrease over time to exploit more and explore less to get to $\hat{Q}_{opt}$.}
 
 \Blue{$Q$-learning with function approximation} avoid memorizing every state as
 $\hat{Q}_{opt}(s,a)$ just maps $(s,a)$ to a value estimate so define
