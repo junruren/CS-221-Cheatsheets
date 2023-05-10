@@ -168,7 +168,9 @@ tuple $(s,a,r,s',a')$ in the sequence of exploration via $\pi$
 }
 \end{displaymath}
 SARSA estimate is updated on the fly as opposed to the model-free MC estimate
-where the estimate can only be updated at teh end of the episode.
+where the estimate can only be updated at the end of the episode. However if
+rewards only exist at the terminal state, SARSA updates would be slower than
+Model-free Monte Carlo.
 
 \Blue{$Q$-learning} (\textbf{\underline{off-policy}}) produces an estimate for
 $Q_{opt}$. For each $(s,a,r,s',a')$:
