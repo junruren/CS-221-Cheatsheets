@@ -169,8 +169,8 @@ $(s,a,r,s',a')$:
 \begin{displaymath}
 \boxed{
 \begin{aligned}
-    \hat{Q}_{opt}(s,a) \leftarrow \hat{Q}_{opt}(s,a) \\
-    - \eta \left[
+    &\hat{Q}_{opt}(s,a) \leftarrow \hat{Q}_{opt}(s,a) \\
+    &- \eta \left[
         \textcolor{red}{\underbrace{\hat{Q}_{opt}(s,a)}_{\text{prediction}}}
         - \textcolor{Green}{\underbrace{(r + \gamma \max_{a' \in A(s')}\hat{Q}_{opt}(s',a'))}_{\text{target}}}
     \right]
@@ -202,12 +202,12 @@ For each $(s,a,r,s',a')$:
 \begin{displaymath}
 \boxed{
 \begin{aligned}
-    \mathbf{w} \leftarrow \mathbf{w} - \eta \\
-    \left[
+    &\mathbf{w} \leftarrow \mathbf{w} - \eta \\
+    &\left[
         \textcolor{red}{\underbrace{\hat{Q}_{opt}(s,a; \mathbf{w})}_{\text{prediction}}}
         - \textcolor{Green}{\underbrace{(r + \gamma \max_{a' \in A(s')}\hat{Q}_{opt}(s',a'; \mathbf{w}))}_{\text{target}}}
     \right] \\
-    \phi(s,a)
+    &\phi(s,a)
 \end{aligned}
 }
 \end{displaymath}

@@ -157,6 +157,7 @@ rewards. The value is based on exploration policy.\\
 Evaluation function could be hand-crafted but also learned from data:
 $\text{Eval}(s) = V(s;\mathbf{w}) = \mathbf{w}\cdot\phi(s)$ (linear).\\
 \begin{displaymath}
+\boxed{
 \begin{split}
     &\mathbf{w} \leftarrow \mathbf{w} - \eta \\
     &\left[\textcolor{red}{\underbrace{\hat{V_\pi}(s;\mathbf{w})}_{\text{prediction}}}
@@ -164,6 +165,7 @@ $\text{Eval}(s) = V(s;\mathbf{w}) = \mathbf{w}\cdot\phi(s)$ (linear).\\
     \hat{V_\pi}(s';\mathbf{w}))}_{\text{target}}}\right]
     \textcolor{blue}{\nabla_{\mathbf{w}}\hat{V_\pi}(s;\mathbf{w})}
 \end{split}
+}
 \end{displaymath}
 For linear functions: $\textcolor{red}{V(s;\mathbf{w})} = \mathbf{w} \cdot
 \phi(s)$; $\textcolor{blue}{\nabla_{\mathbf{w}}V(s;\mathbf{w})} = \phi(s)$.
