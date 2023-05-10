@@ -1,0 +1,50 @@
+\subsection{Search}
+
+\subsubsection{Tree search}
+
+\Red{Algorithms} $b$: \# actions per state; $d$: solution depth, and $D$:
+maximum depth.
+\begin{tabular}{|c|c|c|c|} 
+    \hline
+    \textbf{Algo}  & \textbf{Act'n costs} & \textbf{Space} & \textbf{Time} \\
+    \hline
+    Backtracting & any & $O(D)$ & $O(b^D)$ \\ 
+    \hline
+    BFS & $c \ge 0$ & $O(b^d)$ & $O(b^d)$ \\
+    \hline
+    DFS & $0$ & $O(D)$ & $O(b^D)$ \\
+    \hline
+    DFS-ID & $c \ge 0$ & $O(d)$ & $O(b^d)$ \\
+    \hline
+\end{tabular}
+
+\subsubsection{Graph search}
+
+\Red{State} a summary of all past actions sufficient to choose future actions optimally.
+
+\begin{itemize}
+    \item \textbf{Explored}: states for which the optimal path has been found
+    \item \textbf{Frontier}: states seen for which we are still figuring out how to get there with the cheapest cost
+    \item \textbf{Unexplored}: states not yet seen
+\end{itemize}
+
+\Blue{Dynamic programming (DP)} a Backtracting search algorithm that only works
+for acyclic graphs.
+$\text{FutureCost}(s) = \min_{a\in A(s)}\left[\text{Cost}(s,a) + \text{FutureCost}(\text{Succ}(s,a))\right]$
+or $0$ if at end state.
+
+\Green{Uniform cost search (UCS)} explores states $s$ in increasing order of
+PastCost$(s)$, assuming \textbf{all action costs are non-negative}. Adding a
+positive constant to all costs would make a \emph{different} problem.
+
+\Red{Algorithms} $N$: \# total states; $n$ \# states explored before $s_{end}$.
+
+\begin{tabular}{|c|c|c|c|} 
+    \hline
+    \textbf{Algo} & \textbf{Cycle?} & \textbf{Act'n costs} & \textbf{Time/space} \\
+    \hline
+    DP & No! & any & $O(N)$ \\ 
+    \hline
+    UCS & Ok & $c \ge 0$ & $O(n \log(n))$ \\
+    \hline
+\end{tabular}
