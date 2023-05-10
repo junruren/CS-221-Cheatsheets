@@ -84,7 +84,7 @@ otherwise \fbox{$V_{opt}(s) = \max_{a \in A(s)} Q_{opt}(s,a)$}
 to the optimal values.
 $\forall s$ \fbox{$\pi_{opt}(s) = \arg\max_{a \in A(s)} Q_{opt}(s,a)$}
 
-\Red{Value iteration} finds $V_{opt}(s)$ and therefore $\pi_{opt}(s)$. \textbf{\underline{Off-policy}}
+\Red{Value iteration (off-policy)} finds $V_{opt}(s)$ and therefore $\pi_{opt}(s)$.
 \begin{itemize}
     \item \textbf{Initialization}: \fbox{$\forall s, V_{opt}^{(0)}(s) \leftarrow 0$}
     \item \textbf{Iteration} $t = 1,\dots,T_{VI}$:\\
@@ -117,19 +117,18 @@ policy (usually to get $Q_{\pi}$).\\
 \Green{Off-policy} estimate the value of another policy (usually to get
 $Q_{opt}$).
 
-\Red{Model-based Monte Carlo} estimates $T(s,a,s')$ and $\text{Reward}(s,a,s')$
-using findings from \emph{randomly} traversing the space:
+\Red{Model-based Monte Carlo (off-policy)} estimates $T(s,a,s')$ and
+$\text{Reward}(s,a,s')$ using findings from \emph{randomly} (i.e. no
+policy-following) traversing the space:
 \fbox{$\hat{T}(s,a,s') = \frac{\text{\# times }(s,a,s')\text{ occurs}}{\text{\# times }(s,a)\text{ occurs}}$}
 and \fbox{$\hat{\text{Reward}}(s,a,s') = r \text{ in } (s,a,r,s')$}.
-These estimations can then be used to deduce $Q$-values ($\hat{Q}_\pi$ and $\hat{Q}_{opt}$).
-\textbf{\underline{Off-policy}} because we explore the space arbitrarily to find
-$\pi_{opt}$, independently from an exact policy.
+$\hat{T} \hat{R}$ can then be used to deduce $Q$-values ($\hat{Q}_\pi$ and
+$\hat{Q}_{opt}$).
 
-\Red{Model-free Monte Carlo} directly estimates $Q_\pi$.
+\Red{Model-free Monte Carlo (on-policy)} directly estimates $Q_\pi$.
 \fbox{$\hat{Q}_\pi(s,a) =$ average of $u_t$ where $s_{t-1} = s, a_t = a$}
-($u_t$: the utility starting at step $t$ of a given episode).
-\textbf{\underline{On-policy}} because the estimated value is dependent
-on the policy $\pi$ used to generate the data.
+($u_t$: the utility starting at step $t$ of a given episode).  The estimated
+value is dependent on the policy $\pi$ used to generate the data.
 
 \textbf{Convex combination formula} - for each $(s,a,u)$ of the training set and by
 introducing \fbox{$\eta = \frac{1}{1 + (\text{\# updates to } (s,a))}$}:
@@ -147,10 +146,9 @@ Issue: reaching state-action pair $(s_{t-1}, a_t)$ required the sum until
 termination ($u_t = \sum_{i=0}^{\infty}\gamma^i r_{t+1}$) just for a signle
 update.
 
-\Green{SARSA} estimate $Q_\pi$ by using both raw data (observed $r$) and
+\Green{SARSA (on-policy)} estimate $Q_\pi$ by using both raw data (observed $r$) and
 prediction (estimate of $\hat{Q}_\pi$) as part of the update rule. For each
 tuple $(s,a,r,s',a')$ in the sequence of exploration via $\pi$
-(\textbf{\underline{on-policy}}):
 \begin{displaymath}
 \boxed{
 \begin{aligned}
@@ -167,8 +165,8 @@ where the estimate can only be updated at the end of the episode. However if
 rewards only exist at the terminal state, SARSA updates would be slower than
 Model-free Monte Carlo.
 
-\Blue{$Q$-learning} (\textbf{\underline{off-policy}}) produces an estimate for
-$Q_{opt}$. For each $(s,a,r,s',a')$:
+\Blue{$Q$-learning (off-policy)} produces an estimate for $Q_{opt}$. For each
+$(s,a,r,s',a')$:
 \begin{displaymath}
 \boxed{
 \begin{aligned}
