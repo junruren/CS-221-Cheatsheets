@@ -1,0 +1,25 @@
+\subsection{Constraint satisfaction problems}
+
+\Blue{Factor graph} (aka Markov random field) a set of \underline{variables} $X
+= {X_1,\dots,X_n}$ where $X_i \in \text{Domain}_i$ and \underline{factors}
+$f_1,\dots,f_m$, with each $f_j(X) \ge 0$.
+\Hint{Each factor is implemented as checking a solution rather than computing
+the solution.}
+
+\Red{Scope of a factor $f_j$} the set of variables $f_j$ depends on.
+\Red{Arity} the size of this set. ``Unary factors'' (arity 1); ``Binary
+factors'' (arity 2). ``Constraints'' (factors that return 0 or 1).
+
+\Blue{Assignment weight} each assignment $x = (x_1, \dots, x_n)$ yields a
+$\text{Weight}(x)$ defined as being the product of all factors $f_j$ applied
+to that assignment.
+\fbox{$\text{Weight}(x) = \Pi_{j=q}^{m} f_j(x)$} ($x$ in its entirety is passed
+in to each $f_j$ for simplicity of this notation, though in reality only a
+subset of $x$ would be needed for $f_j$)
+
+\Green{CSP} a factor graph where all factors are binary.
+\fbox{For $j = 1,\dotsm$, $f_j(x) \in \{0,1\}$} (the constraint $j$ with
+assignment $x$ is said to be satisfied iff $f_j(x) = 1$.)
+
+\Green{Consistent assignment $x$ of a CSP} iff $\text{Weight}(x) = 1$ (i.e., all
+constrains are satisfied.)
