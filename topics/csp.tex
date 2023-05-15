@@ -6,13 +6,15 @@ $f_1,\dots,f_m$, with each $f_j(X) \ge 0$.
 \Hint{Each factor is implemented as checking a solution rather than computing
 the solution.}
 
+\Green{Domain} possible values to be assigned to a variable.
+
 \Red{Scope of a factor $f_j$} the set of variables $f_j$ depends on.
 \Red{Arity} the size of this set. ``Unary factors'' (arity 1); ``Binary
 factors'' (arity 2). ``Constraints'' (factors that return 0 or 1).
 
-\Blue{Assignment weight} each assignment $x = (x_1, \dots, x_n)$ yields a
-$\text{Weight}(x)$ defined as being the product of all factors $f_j$ applied
-to that assignment.
+\Blue{Assignment weight} each \underline{assignment $x = (x_1, \dots, x_n)$}
+yields a $\text{Weight}(x)$ defined as being the product of all factors $f_j$
+applied to that assignment.
 \fbox{$\text{Weight}(x) = \Pi_{j=q}^{m} f_j(x)$} ($x$ in its entirety is passed
 in to each $f_j$ for simplicity of this notation, though in reality only a
 subset of $x$ would be needed for $f_j$)
@@ -23,3 +25,74 @@ assignment $x$ is said to be satisfied iff $f_j(x) = 1$.)
 
 \Green{Consistent assignment $x$ of a CSP} iff $\text{Weight}(x) = 1$ (i.e., all
 constrains are satisfied.)
+
+\Green{Dependent factors $D(x,X_i)$} a set of factors depending on $X_i$ but not
+on unassigned variables.
+
+\Red{Backtracking search} find maximum weight assignment of a factor graph.
+\textbf{$\text{Backtrack}(x, w, \text{Domains})$}
+\begin{enumerate}
+    \item choose an unassigned \textbf{variable} $X_i$ \Hint{(MCV)}
+    \item order \textbf{values} of $X_i$'s Domain \Hint{(LCV)}
+    \item for each value $v$ in the order:\begin{enumerate}
+        \item $\delta \leftarrow \Pi_{f_i\in D(x,X_i)}f_j(x\cup\left\{X_i:v\right\})$
+        \item if $\delta = 0$: continue
+        \item $\text{Domains}' \leftarrow \text{Domains}$ via \textbf{lookahead} \Hint{(forward checking)}
+        \item if $\text{Domains}_i'$ is empty: continue
+        \item \textbf{$\text{Backtrack}(x \cup \left\{X_i:v\right\}, w\delta, \text{Domains}')$}
+    \end{enumerate}
+\end{enumerate}
+\begin{itemize}
+    \item Strategy: extends partial assignments
+    \item Optimality: exact
+    \item Time: exponential
+\end{itemize}
+
+\Blue{Forward checking} one-step lookahead heuristic that preemptively removes
+inconsistent values from the domains of neighboring variables.
+\begin{itemize}
+    \item After assigning a variable $X_i$, it eliminates inconsistent values from the domains of all its neighbors.
+    \item If any of these domains become empty, stop the local backtracking search.
+    \item if we unassign a variable $X_i$, have to restore the domain of its neighbors.
+\end{itemize}
+
+\Green{Most constrained \underline{variable}} selects the next unassigned
+variable that has the fewest consistent values: fail early, prune early.
+
+\Green{Least constrained \underline{value}} assigns the next value that yields
+the highest number of consistent values of neighboring variables: prefers the
+value that is most likely to work.
+
+\Green{Arc consistency of variable $X_i$} w.r.t. $X_j$ is enforced when for each
+$x_i \in \text{Domain}_i$, there exists $x_j \in \text{Domain}_j$ such that any
+factos between $X_i$ and $X_j$ is non-zero.
+
+\Red{AC-3} a multi-step lookahead heuristic that applies forward checking to all
+relevant variables. After a given assignment, it performs forward checking and
+then successively enforces arc consistency w.r.t. the neighbors of variables for
+which the domain change during the process.
+\Hint{AC-3 only looks locally at the graph for nothing blatantly wrong; it can't
+detect when there are no consistent assignments.}
+
+\Red{Beam search} extends partial assignments of $n$ variables of branching
+factor $b = |\text{Domain}|$ by exploring the $K$ top paths at each step. The
+beam size $1 \ge K \ge b^n$ controls the tradeoff between efficiency and
+accuracy.
+\Hint{Runtime is Linear to $n$: $O(n \underbrace{Kb
+\log(Kb)}_{\text{sorting top K}})$}. $K=1$: greedy search ($O(nb)$ time); $K
+\rightarrow +\infty$: BFS ($O(b^n)$ time).
+\begin{itemize}
+    \item Strategy: extends partial assignments
+    \item Optimality: approximate
+    \item Time: linear
+\end{itemize}
+
+\Blue{Local search (iterated conditional modes)} modifies the assignment of a
+factor graph one variable at a time until convergence. AT step $i$, assign to
+$X_i$ the value $v$ that maximizes the product of all factors connected to that
+variable. \Hint{ICM may get stuck in local optima; adding randomness may help.}
+\begin{itemize}
+    \item Strategy: modify complete assignments
+    \item Optimality: approximate
+    \item Time: linear
+\end{itemize}
