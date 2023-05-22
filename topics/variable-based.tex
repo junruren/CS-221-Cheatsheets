@@ -96,3 +96,95 @@ variable. \Hint{ICM may get stuck in local optima; adding randomness may help.}
     \item Optimality: approximate
     \item Time: linear
 \end{itemize}
+
+\subsection{Markov Networks}
+
+\begin{tabular}{|c|c|c|c|} 
+    \hline
+    \textbf{CSPs} & \textbf{Markov networks} \\
+    \hline
+    variables & random variables \\ 
+    \hline
+    weights & probabilities \\
+    \hline
+    max weight assignment & marginal probabilities \\
+    \hline
+\end{tabular}
+
+Capture the uncertainty over assignment using the language of probability.
+
+\Green{Markov Network} a factor graph which defines a joint distribution over
+random variables $X = (X_1,\dots,X_n)$:
+\fbox{$\mathbb{P}(X=x)=\frac{\text{Weight}(x)}{Z}$}
+
+\Green{$Z = \sum_{x'} \text{Weight}(x')$} sum all the possible assignments'
+weights (normalization constant)
+
+\Green{Marginal probability} the probability of when one particular variable
+$X_i$ is assigned with a particular value $v$: sum $\mathbb{P}$ when $X_i = v$
+\fbox{$\mathbb{P}(X_i=v)=\sum_{x:x_i=v}\mathbb{P}(X=x)$}
+
+\Blue{Gibbs sampling} Initialize $x$ to a random complete assignment.
+Loop through $i=1,\dots,n$ until convergence: \begin{itemize}
+    \item Set $x_i = v$ with probability $\mathbb{P}(X_i = v | \underbrace{X_{-i}}_{\text{all vars except} X_i}=x_{-i})$
+    \item Increment $\text{count}_i(x_i)$ (how often this assignment is encountered. \Hint{can just track particular vars we're interested in.})
+\end{itemize}
+Estimate $\hat{\mathbb{P}}(X_i=x_i)=\frac{\text{count}_i(x_i)}{\sum_{v}\text{count}_i(v)}$
+
+\begin{tabular}{|c|c|c|c|} 
+    \hline
+    \textbf{ICM} & \textbf{Gibbs sampling} \\
+    \hline
+    max weight & marginal probabilities \\ 
+    assignment &   \\ 
+    \hline
+    choose best value & sample a value \\
+    \hline
+    converges to & marginals converge to\\
+    local optimum & correct answer \\
+    \hline
+\end{tabular}
+
+\subsection{Bayesian Networks}
+
+\Blue{Explaining away} suppose two causes positively influence an effect.
+Conditioned on the effect, further conditioning on one causes reduces the
+probability of the other cause.
+
+\Red{Bayesian network} a durected acyclic graph that specifies a joint distribution
+over random variables $X=(X_1,\dots,X_n)$ as a product of local conditional distributions,
+one for each node: \fbox{$\mathbb{{P}}(X_1=x_1,\dots,X_n=x_n) = \prod_{i=1}^{n}
+p(x_i|x_{\text{Parents}(i)})$}
+
+\Blue{Probabilistic program} randomizes variable assignment such that we can
+write down complex Bayesian networks that generates assignments without having
+to explicitly specify associated probabilities.
+\Hint{Unlike normal classification (e.g., neural nets), Bayesian networks
+provide a different paradigm where we think about going from output to the
+input.}
+
+\Green{Probabilistic inference strategy} to compute the probability $P(Q|E=e)$
+of query $Q$ given evidence $E=e$:
+\begin{enumerate}
+    \item Remove vars that aren't ancestors of the query $Q$ or the evidence $E$ by marginalization
+    \item Convert Bayesian network to factor graph
+    \item Condition on the evidence $E=e$
+    \item Remove nodes disconnected from the query $Q$ by marginalization
+    \item Run probabilistic inference algorithm
+\end{enumerate}
+\Blue{Filtering question} asks for the distribution of some hidden variable
+$H_i$ conditioned on only the evidence up until that point. \Hint{Useful for
+real-time object tracking as the future can't be seen.}
+\Blue{Smoothing question} asks for the distribution of some hidden variable
+$H_i$ conditioned on on the evidence including the future. \Hint{Useful when all
+the data have been collected and we want to retrospectively go and figure out
+what the hidden state $H_i$ was.}
+
+\Red{Forward-backward algorithm} computes the exact value of $P(H=h_k|E=e)$ a
+smoothing query) for any $k\in\left\{1,\dots,L\right\}$ in the case of an HHM of
+size $L$.
+\begin{enumerate}
+    \item for $i\in \left\{1,\dots,L\right\}$, compute $F_i(h_i)=\sum_{h_{i-1}}F_{i-1}(h_{i-1})p(h_i|h_{i-1})p(e_i|h_i)$
+    \item for $i\in \left\{L,\dots,1\right\}$, compute $B_i(h_i)=\sum_{h_{i+1}}B_{i+1}(h_{i+1})p(h_{i+1}|h_i)p(e_{i+1}|h_{i+1})$
+    \item for $i\in \left\{1,\dots,L\right\}$, compute $S_i(h_i)=\frac{F_i(h_i)B_i(h_i)}{\sum_{h_i}F_i(h_i)B_i(h_i)}$
+\end{enumerate}
