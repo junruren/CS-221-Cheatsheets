@@ -58,10 +58,12 @@ inconsistent values from the domains of neighboring variables.
 
 \Green{Most constrained \underline{variable}} selects the next unassigned
 variable that has the fewest consistent values: fail early, prune early.
+\Hint{Useful when some factors are constraints.}
 
 \Green{Least constrained \underline{value}} assigns the next value that yields
 the highest number of consistent values of neighboring variables: prefers the
-value that is most likely to work.
+value that is most likely to work. \Hint{Useful when all factors are
+constraints.}
 
 \Green{Arc consistency of variable $X_i$} w.r.t. $X_j$ is enforced when for each
 $x_i \in \text{Domain}_i$, there exists $x_j \in \text{Domain}_j$ such that any
@@ -88,9 +90,17 @@ accuracy.
 \end{itemize}
 
 \Blue{Local search (iterated conditional modes)} modifies the assignment of a
-factor graph one variable at a time until convergence. AT step $i$, assign to
+factor graph one variable at a time until convergence. At step $i$, assign to
 $X_i$ the value $v$ that maximizes the product of all factors connected to that
-variable. \Hint{ICM may get stuck in local optima; adding randomness may help.}
+variable.
+\begin{itemize}
+    \item Initiualize $x$ to a random complete assignment (not partial)
+    \item Loop through $i = 1, \dots, n$ until convergence: \begin{itemize}
+        \item Compute weight of $x_v = x \cup {X_i :v}$ for each $v$
+        \item $x \leftarrow x_v$ with highest weight
+    \end{itemize}
+\end{itemize}
+\Hint{ICM may get stuck in local optima; adding randomness may help.}
 \begin{itemize}
     \item Strategy: modify complete assignments
     \item Optimality: approximate
@@ -124,12 +134,18 @@ weights (normalization constant)
 $X_i$ is assigned with a particular value $v$: sum $\mathbb{P}$ when $X_i = v$
 \fbox{$\mathbb{P}(X_i=v)=\sum_{x:x_i=v}\mathbb{P}(X=x)$}
 
-\Blue{Gibbs sampling} Initialize $x$ to a random complete assignment.
-Loop through $i=1,\dots,n$ until convergence: \begin{itemize}
-    \item Set $x_i = v$ with probability $\mathbb{P}(X_i = v | \underbrace{X_{-i}}_{\text{all vars except} X_i}=x_{-i})$
-    \item Increment $\text{count}_i(x_i)$ (how often this assignment is encountered. \Hint{can just track particular vars we're interested in.})
+\Blue{Gibbs sampling} approximately computes marginal probabilities.
+\Hint{Follows the tempalte of local search: change one variable at a time. But
+unlike ICM, Gibbs is a randomized algo .}
+
+\begin{itemize}
+    \item Initialize $x$ to a random complete assignment.
+    \item Loop through $i=1,\dots,n$ until convergence: \begin{itemize}
+        \item Set $x_i = v$ with probability $\mathbb{P}(X_i = v | \underbrace{X_{-i}}_{\text{all vars except} X_i}=x_{-i})$
+        \item Increment $\text{count}_i(x_i)$ (how often this assignment is encountered. \Hint{can just track particular vars we're interested in.})
+    \end{itemize}
+    \item Estimate $\hat{\mathbb{P}}(X_i=x_i)=\frac{\text{count}_i(x_i)}{\sum_{v}\text{count}_i(v)}$
 \end{itemize}
-Estimate $\hat{\mathbb{P}}(X_i=x_i)=\frac{\text{count}_i(x_i)}{\sum_{v}\text{count}_i(v)}$
 
 \begin{tabular}{|c|c|c|c|} 
     \hline
@@ -145,13 +161,17 @@ Estimate $\hat{\mathbb{P}}(X_i=x_i)=\frac{\text{count}_i(x_i)}{\sum_{v}\text{cou
     \hline
 \end{tabular}
 
+\boxed{
+    P(A|B,C) = \frac{P(B|A,C) P(A|C)}{P(B|C)}
+}
+
 \subsection{Bayesian Networks}
 
 \Blue{Explaining away} suppose two causes positively influence an effect.
 Conditioned on the effect, further conditioning on one causes reduces the
 probability of the other cause.
 
-\Red{Bayesian network} a durected acyclic graph that specifies a joint distribution
+\Red{Bayesian network} a directed acyclic graph that specifies a joint distribution
 over random variables $X=(X_1,\dots,X_n)$ as a product of local conditional distributions,
 one for each node: \fbox{$\mathbb{{P}}(X_1=x_1,\dots,X_n=x_n) = \prod_{i=1}^{n}
 p(x_i|x_{\text{Parents}(i)})$}
@@ -188,3 +208,46 @@ size $L$.
     \item for $i\in \left\{L,\dots,1\right\}$, compute $B_i(h_i)=\sum_{h_{i+1}}B_{i+1}(h_{i+1})p(h_{i+1}|h_i)p(e_{i+1}|h_{i+1})$
     \item for $i\in \left\{1,\dots,L\right\}$, compute $S_i(h_i)=\frac{F_i(h_i)B_i(h_i)}{\sum_{h_i}F_i(h_i)B_i(h_i)}$
 \end{enumerate}
+with the convention $F_0 = B_{L+1}$. We get \fbox{$P(H=h_k|E=e) = S_k(h_k)$}
+
+\Green{Particle (partial assignment) filtering} approximates the posterior
+density of state variables given the evidence of observation variables by
+keeping track of $K$ particles at a time. Initialize $C \leftarrow
+\left[\left\{\right\}\right]$. For $t = 1,\dots,n$:
+\begin{enumerate}
+    \item \textbf{proposal:} for each old particle $x_{t-1} \in C$, sample $x$
+        from the transition probability distribution $p(x|x_{t-1})$ and add $x$
+        to a set $C'$.
+    \item \textbf{weighting:} weight each $x$ of the set $C'$ by $w(x) =
+        p(e_t|x)$ ($e_t$ is the evidence observed at time $t$).
+    \item \textbf{resampling:} sample $K$ elements from the set $C'$ using the
+        probability distribution induced by $w$ and store them in $C$: these are
+        current particles $x_t$.
+\end{enumerate}
+
+\Green{Maximum likelihood} if we don't know the local conditional distributions,
+we can learn them using max likelihood.
+\fbox{$\max_\theta \prod_{x \in D_{\text{train}}} p(X = x;\theta)$}
+\Hint{HMM parameters: $\theta = (p_{\text{start}}, p_{\text{trans}},
+p_{\text{emit}})$.}
+
+\Green{Laplace smoothing} for each distribution $d$ and partial assignment 
+$(x_{\text{Parents}(i)}, x_i)$, add $\lambda$ (a constant) to
+$\text{count}_{d}(x_{\text{Parents}(i)}, x_i)$, then normalize to get
+probability estimates.
+\Hint{Hallucinate $\lambda$ occurrences of each local assignment.}
+Larger $\lambda$ $\Rightarrow$ more smoothing $\Rightarrow$ probabilities closer
+to uniform.
+
+\Red{Expectation-Maximization (EM)} estimates the parameter $\theta$ through
+maximum likelihood estimation by repeatedly constructing a lower-bound on the
+likelihood (E-step) and optimizing that lower bound (M-step):
+\begin{itemize}
+    \item \underline{E-step}: evaluate the posterior probability $q(h)$ that
+        each data point $e$ came from a particular cluster $h$:
+        \fbox{$q(h) = P(H=h|E=e;\theta)$}
+    \item \underline{M-step}: use the posterior probabilities $q(h)$ as cluster
+        specific weights on data points $e$ to determine $\theta$ through
+        maximum likelihood.
+\end{itemize}
+\Hint{Like K-means, EM converges to a local optima. EM can handle partial data.}
