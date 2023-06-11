@@ -63,11 +63,14 @@ variable that has the fewest consistent values: fail early, prune early.
 \Green{Least constrained \underline{value}} assigns the next value that yields
 the highest number of consistent values of neighboring variables: prefers the
 value that is most likely to work. \Hint{Useful when all factors are
-constraints.}
+constraints.} If some factors get arbitrary non-negative values, we need to try
+all consistent values anyway.
 
 \Green{Arc consistency of variable $X_i$} w.r.t. $X_j$ is enforced when for each
 $x_i \in \text{Domain}_i$, there exists $x_j \in \text{Domain}_j$ such that any
 factos between $X_i$ and $X_j$ is non-zero.
+\Hint{\textbf{Arc consistency is a \emph{definition}}, not an algorithm: enforce
+all the way.}
 
 \Red{AC-3} a multi-step lookahead heuristic that applies forward checking to all
 relevant variables. After a given assignment, it performs forward checking and
@@ -86,6 +89,12 @@ accuracy.
 \begin{itemize}
     \item Strategy: extends partial assignments
     \item Optimality: approximate
+        \Hint{
+            \begin{itemize}
+                \item Global optimality is only guaranteed by unbounded beam size
+                \item Increasing $k$ from 1 to 2 doesn't guarantee increasing weight assignment
+            \end{itemize}
+        }
     \item Time: linear
 \end{itemize}
 
@@ -106,6 +115,17 @@ variable.
     \item Optimality: approximate
     \item Time: linear
 \end{itemize}
+
+\Red{CSP tricks}
+\Hint{
+    \begin{itemize}
+        \item If it's possible that a variable doesn't get an assignment,
+            consider extending the domain to inclue a $\emptyset$ value.
+        \item max weight assignment may be skewed towards arbitrarily high
+            assignment if there exists unbounded non-negative factor value like
+            a ``preference''. Bounding it to say 1 through 10 may help.
+    \end{itemize}
+}
 
 \subsection{Markov Networks}
 
@@ -147,7 +167,7 @@ unlike ICM, Gibbs is a randomized algo .}
     \item Estimate $\hat{\mathbb{P}}(X_i=x_i)=\frac{\text{count}_i(x_i)}{\sum_{v}\text{count}_i(v)}$
 \end{itemize}
 
-\begin{tabular}{|c|c|c|c|} 
+\begin{tabular}{|c|c|}
     \hline
     \textbf{ICM} & \textbf{Gibbs sampling} \\
     \hline
@@ -161,11 +181,11 @@ unlike ICM, Gibbs is a randomized algo .}
     \hline
 \end{tabular}
 
+\subsection{Bayesian Networks}
+
 \boxed{
     P(A|B,C) = \frac{P(B|A,C) P(A|C)}{P(B|C)}
 }
-
-\subsection{Bayesian Networks}
 
 \Blue{Explaining away} suppose two causes positively influence an effect.
 Conditioned on the effect, further conditioning on one causes reduces the
@@ -200,12 +220,29 @@ $H_i$ conditioned on on the evidence including the future. \Hint{Useful when all
 the data have been collected and we want to retrospectively go and figure out
 what the hidden state $H_i$ was.}
 
+\Green{Lattice representation} $O(n|\text{Domain}|)$ nodes and
+$O(n|\text{Domain}|^2)$ edges.
+\includegraphics[width=0.25\textwidth]{topics/lattice_representation.jpg}
+A path's weight is also the joint probability $P(H=h,E=e)$ (all variables assigned!)
+
 \Red{Forward-backward algorithm} computes the exact value of $P(H=h_k|E=e)$ a
 smoothing query) for any $k\in\left\{1,\dots,L\right\}$ in the case of an HHM of
-size $L$.
+size $L$. \Hint{Running time: $O(n|\text{Domain}|^2)$.}
 \begin{enumerate}
-    \item for $i\in \left\{1,\dots,L\right\}$, compute $F_i(h_i)=\sum_{h_{i-1}}F_{i-1}(h_{i-1})p(h_i|h_{i-1})p(e_i|h_i)$
-    \item for $i\in \left\{L,\dots,1\right\}$, compute $B_i(h_i)=\sum_{h_{i+1}}B_{i+1}(h_{i+1})p(h_{i+1}|h_i)p(e_{i+1}|h_{i+1})$
+    \item for $i\in \left\{1,\dots,L\right\}$, compute $F_i(h_i)=$\\
+        \fbox{
+            $\begin{cases}
+            p(h_1)p(e_1|h_1) & i = 1\\
+            \sum_{h_{i-1}}F_{i-1}(h_{i-1})p(h_i|h_{i-1})p(e_i|h_i) & \text{otherwise}\\
+            \end{cases}$
+        }
+    \item for $i\in \left\{L,\dots,1\right\}$, compute $B_i(h_i)=$\\
+        \fbox{
+            $\begin{cases}
+                1 & $i = n$\\
+                \sum_{h_{i+1}}B_{i+1}(h_{i+1})p(h_{i+1}|h_i)p(e_{i+1}|h_{i+1}) & \text{otherwise}\\
+            \end{cases}$
+        }
     \item for $i\in \left\{1,\dots,L\right\}$, compute $S_i(h_i)=\frac{F_i(h_i)B_i(h_i)}{\sum_{h_i}F_i(h_i)B_i(h_i)}$
 \end{enumerate}
 with the convention $F_0 = B_{L+1}$. We get \fbox{$P(H=h_k|E=e) = S_k(h_k)$}
@@ -239,15 +276,39 @@ probability estimates.
 Larger $\lambda$ $\Rightarrow$ more smoothing $\Rightarrow$ probabilities closer
 to uniform.
 
-\Red{Expectation-Maximization (EM)} estimates the parameter $\theta$ through
-maximum likelihood estimation by repeatedly constructing a lower-bound on the
-likelihood (E-step) and optimizing that lower bound (M-step):
+\Red{Expectation-Maximization (EM)} a parameter \Hint{learning algorithm} that
+estimates the parameter $\theta$; $H$ is hidden, $E=e$ is observed:
 \begin{itemize}
-    \item \underline{E-step}: evaluate the posterior probability $q(h)$ that
-        each data point $e$ came from a particular cluster $h$:
-        \fbox{$q(h) = P(H=h|E=e;\theta)$}
-    \item \underline{M-step}: use the posterior probabilities $q(h)$ as cluster
-        specific weights on data points $e$ to determine $\theta$ through
-        maximum likelihood.
+    \item Initialize $\theta$ randomly
+    \item Repeat until convergence:\begin{itemize}
+        \item \underline{E-step}:\begin{itemize}
+            \item Compute \fbox{$q(h) = P(H=h|E=e;\theta)$}
+            \item Create fully-observed weighted examples: $(h, e)$ with weight
+                $q(h)$
+        \end{itemize}
+        \item \underline{M-step}: Maximum likelihood (count and normalize) on
+            weighted examples to get $\theta$
+    \end{itemize}
 \end{itemize}
-\Hint{Like K-means, EM converges to a local optima. EM can handle partial data.}
+One iteration of EM:
+\includegraphics[width=0.25\textwidth]{topics/em.jpg}
+\Hint{Like K-means, EM converges to a local optima. \textbf{EM can handle partial data.}}
+
+\begin{wrapfigure}{l}{0.12\textwidth}
+    \includegraphics[width=0.12\textwidth]{topics/Bayesnet_problem.jpg}
+\end{wrapfigure}
+$Y_0 = 0$\\
+$X_i$ chosen uniformly from $\{1,2,3,4\}$. \\
+$p(R_i = 1) = (1-\epsilon)$ (remember)\\
+\textbf{Suppose we observe that $Y_2=3$. What do we believe about $X_2$?}\\
+First note that $Y_1=X_1$ deterministically, which has a uniform distribution
+over $\{1, 2, 3, 4\}$. Next, let us write out the conditional distribution:
+$P(X_2=x_2|Y_2=3) \propto P(X_2=x_2, Y_2=3) = \sum_{y_1,r_2} p(y_1)p(r_2)p(x_2)p(y_2=3|y_1,x_2,r_2)$
+Now comute RHS for each value of $x_2$
+
+\begin{wrapfigure}{l}{0.15\textwidth}
+    \includegraphics[width=0.15\textwidth]{topics/Bayesnet_problem_ans.jpg}
+\end{wrapfigure}
+For $X_2 \in \{1,2\}$, we must have had remembered ($R_2 = 1$), which forces
+$Y_1 = Y_2 - X_2$ (has probability $\frac{1}{4}$). For $X_2=3$, we must have
+forgotten ($R_2 = 0$), and $Y_1$ is free to be anything (has probability $1$).

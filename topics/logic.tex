@@ -1,0 +1,263 @@
+\subsection{Logic Basics}
+
+\Blue{Syntax} representation of a meaning: what are valid expressions in the language?
+
+\Blue{Semantics} what do these expressions mean?
+
+\Green{Inference rules} what does a formula imply?
+
+\Blue{Propositional symbols} (atomic formulas): $A$, $B$, $C$
+
+\Red{Model $w$} denotes an \underline{assignment} of truth values to
+propositional symbols.
+\Hint{Example: 3 propositional symbols yield $2^3=8$ possible models.}
+
+\Blue{Interpretation function $\mathcal{I}(f,w)$} outputs whether model $w$
+satisfies formula $f$: \fbox{$\mathcal{I}(f,w) = \begin{cases}
+    1 & w \text{ satisfies } f\\
+    0 & \text{otherwise}
+\end{cases}$}
+
+\Green{Set of models $\mathcal{M}(f)$} denotes the set of models $w$ that
+satisfy formula $f$:
+\fbox{$\forall w \in \mathcal{M}(f)$, $\mathcal{I}(f,w) = 1$}
+
+\Green{Knowledge base $KB$} a set of formulas representing their conjunction:
+\fbox{$\mathcal{M}(KB) = \cap_{f \in KB} \mathcal{M}(f)$}
+$KB$ specifies constraints on the world. $\mathcal{M}(KB)$ is the set of all
+worlds satisfying those constraints.
+\Hint{Adding more formulas to the KB shrinks the set of models (more
+constrained).}
+
+\Red{Entailment $KB \models f$} KB entails $f$ iff $\mathcal{M}(KB) \subseteq
+\mathcal{M}(f)$ \Hint{$f$ doesn't bring any new info.}
+
+\Red{Contradiction $KB \models \neg f$} KB contradicts $f$ iff $\mathcal{M}(KB) \cap \mathcal{M}(f)
+= \emptyset$
+\Hint{No model satisfies the constraints after adding $f$.}
+
+\Red{Contigency} $\emptyset \subsetneq \mathcal{M}(KB) \cap \mathcal{M}(f) \subsetneq \mathcal{M}(KB)$.
+\Hint{$f$ adds a non-trivial amount of info to KB and doesn't contradict KB.}
+
+\Blue{Probabilistic interpretation} the probability that query $f$ is evaluated
+to $1$ can be seen as the proportion of models $w$ of the KB that satisfy $f$:
+\fbox{
+    $P(f|KB) = \frac
+        {\sum_{w \in \mathcal{M}(KB) \cap \mathcal{M}(f)} P(W=w)}
+        {\sum_{w \in \mathcal{M}(KB)} P(W=w)}$
+}
+
+\Green{Satisfiability} the KB is said to be satisfiable if at least one model
+$w$ satisfies all its constraints, i.e.
+\fbox{$\mathcal{M}(KB) \neq \emptyset$}.
+\begin{itemize}
+    \item Is $KB \cup \{\neg f\}$ satisfiable? \begin{itemize}
+        \item no: \textbf{entailment}
+        \item yes: Is $KB \cup \{f\}$ satisfiable? \begin{itemize}
+            \item no: \textbf{contradiction}
+            \item yes: \textbf{contingent}
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\Blue{Model checking} input: a KB and output: whether the KB is satisfiable or
+not.
+
+\begin{tabular}{|c|c|}
+    \hline
+    \textbf{Model checking} & \textbf{CSP} \\
+    \hline
+    propositional symbol & variable \\ 
+    \hline
+    formula & constraint \\
+    \hline
+    model & assignment\\
+    \hline
+\end{tabular}
+
+\Red{Inference rule} of premises $f_1, \dots, f_k$ and conclusion $g$ is written:
+\fbox{$\frac{f_1, \dots, f_k}{g}$} where $f$s and $g$ are formulas.
+\Hint{Rules operate directly on syntax, not on semantics.}
+
+\Green{Modus ponens inference rule} for any propositional symbols $p$ and $q$:
+\fbox{$\frac{p, p \rightarrow q}{q}$}.
+Example: $\frac{\text{Rain}, \text{Rain} \rightarrow \text{Wet}}{\text{Wet}}$
+\begin{itemize}
+    \item Premises\begin{itemize}
+        \item It's raining
+        \item If it's raining, then it's wet
+    \end{itemize}
+    \item Conclusion: therefore, it's wet
+\end{itemize}
+
+\Red{Forward inference} a model checking algorithm. Input: set of inference
+rules Rules. Repeat until no changes to KB:
+\begin{itemize}
+    \item Choose set of formulas $f_1, \dots, f_k \in KB$
+    \item If matching rule $\frac{f_1, \dots, f_k}{g}$ exists:\begin{itemize}
+        \item Add $g$ to $KB$
+    \end{itemize}
+\end{itemize}
+
+\Green{Derivation $KB \vdash f$} $KB$ \textbf{derives/proves} $f$ iff $f$
+eventually gets added to $KB$.
+
+\Blue{Soundness} a set of inference rules Rules is sound if:
+\fbox{$\left\{f:KB \vdash f\right\} \subseteq \left\{f:KB \models f\right\}$}.
+\begin{itemize}
+    \item Inferred formulas are entailed by $KB$
+    \item Can be checked one rule at a time
+    \item \Hint{\emph{Nothing but the truth}}
+\end{itemize}
+Examples:
+Modus ponens such as
+$\frac{\text{Rain}, \text{Rain} \rightarrow \text{Wet}}{\text{Wet}}$ is sound.
+$\frac{\text{Rain}, \text{Rain} \rightarrow \text{Wet}}{\text{Rain}}$ is not sound.
+
+\Blue{Completeness} a set of inference rules Rules is complete if:
+\fbox{$\left\{f:KB \vdash f\right\} \supseteq \left\{f:KB \models f\right\}$}.
+\begin{itemize}
+    \item Formulas entailing $KB$ are either already in the knowledge base or inferred from it
+    \item \Hint{\emph{The whole truth}}
+\end{itemize}
+Modus ponens is incomplete.
+
+\subsubsection{Propositional logic}
+
+\Red{Horn clause} is either:
+\begin{itemize}
+    \item a \underline{definite clause}: \fbox{$(p_1 \wedge \dots \wedge p_k) \rightarrow q$}
+    \item a \underline{goal clause}: \fbox{$(p_1 \wedge \dots \wedge p_k) \rightarrow \text{false}$}
+        \Hint{Interpreted as the negation of the conjunction.}
+\end{itemize}
+
+\Red{Modus ponens inference rule}
+\fbox{$\frac{p_1, \dots, p_k, (p_1 \wedge \dots \wedge p_k) \rightarrow q}{q}$}
+Modus ponens is \textbf{complete} w.r.t. Horn clauses:
+\begin{itemize}
+    \item if we suppose that $KB$ contains only Horn clauses and $q$ is an entailed propositional symbol.
+    \item then applying modus ponens will derive $q$.
+\end{itemize}
+
+\Green{Conjunctive normal form (CNF)} $\wedge$ (and) or $\vee$ (or-s).
+\Hint{Equivalent: KB where each formula is a clause.}
+
+\Red{Convert into CNFs}
+\begin{tabular}{c|l}
+    \hline
+    $f \rightarrow g$ & $\neg f \vee g$ \\ 
+    \hline
+    $f \leftrightarrow g$ & $(f \rightarrow g) \wedge (g \rightarrow f)$ \\ 
+    \hline
+    $\neg (f \wedge g)$ & $\neg f \vee \neg g$\\
+    \hline
+    $\neg (f \vee g)$ & $\neg f \wedge \neg g$\\
+    \hline
+    $f \vee (g \wedge h)$ & $(f \vee g) \wedge (f \vee h)$\\
+    \hline
+\end{tabular}
+
+\Hint{\textbf{Use parentheses around $(f \rightarrow g)$ to ``beat'' $\wedge$}}
+
+\Green{Resolution inference rule} \fbox{
+    $\frac{f_1 \vee \dots \vee f_k \vee p, \neg p \vee g_1 \vee \dots \vee g_m}
+    {f_1 \vee \dots \vee f_k \vee g_1 \vee \dots \vee g_m}$
+}
+Example: $\frac{\text{Rain} \vee \text{Snow}, \neg \text{Snow} \vee \text{Traffic}}
+{\text{Rain} \vee \text{Traffic}}$
+
+\Blue{Resolution-based inference} recall $KB \models f \leftrightarrow KB \cup \{\neg f\}$ is unsatisfiable.
+\begin{itemize}
+    \item Add $\neg f$ to $KB$
+    \item Convert all formulas into CNF.
+    \item Repeatedly apply resolution rule.
+    \item Return entailment iff False is derived.
+\end{itemize}
+
+\subsubsection{First-order logic}
+
+\Blue{Terms} expressions refer to objects:
+\begin{itemize}
+    \item Constant symbol: Alice
+    \item Variable: $x$
+    \item Function of terms: $sum(x, 3)$
+\end{itemize}
+
+\Blue{Formulas} refer to truth values:
+\begin{itemize}
+    \item Atomic formula (predicate applied to terms): Knows(Bob, Arith)
+    \item Connectives applied to formulas
+    \item Quantifiers applied to formulas
+\end{itemize}
+
+\begin{itemize}
+    \item \Hint{see ``every'' thinks $\forall$ and $\rightarrow$}: \begin{itemize}
+        \item Every student knows arithmetic: $\forall x \text{Student}(x) \rightarrow \text{Knows}(x, \text{arithmetic})$
+    \end{itemize}
+    \item \Hint{see ``some'' thinks $\exists$ and $\wedge$}: \begin{itemize}
+        \item Some student knows arithmetic: $\exists x \text{Student}(x) \wedge \text{Knows}(x, \text{arithmetic})$
+    \end{itemize}
+    \item $\neg \forall x P(x)$ equivalent to $\exists x \neg P(x)$
+\end{itemize}
+
+\Green{Model $w$} in first-order logic maps:
+\begin{itemize}
+    \item constant symbols to objects: e.g. $w(\text{alice}) = o_1, w(\text{bob}) = o_2, w(\text{arithmetic}) = o_3$
+    \item predicate symbols to tuple of objects: e.g. $w(\text{Knows}) = \{(o_1, o_3), (o_2, o_3), \dots\}$
+\end{itemize}
+
+Two assumptions to simplify things:
+\begin{itemize}
+    \item \Hint{Unique names assumption}: each object has \textbf{at most one} constant symbol.
+    \item \Hint{Domain closure}: each object has \textbf{at least one} constant symbol.
+\end{itemize}
+\Hint{\textbf{Together}}: 1-to-1 mapping between constant symbols in syntax-land
+and objects in semantics-land.\\
+Then: First-order logic is syntactic sugar for propositional logic $\rightarrow$
+\Hint{use any inference algorithm for propositional logic.}
+\Blue{Propositionalization} example:
+\begin{tabular}{l|l}
+    \hline
+    $\text{Stu}(\text{A}) \wedge \text{Stu}(\text{A})$ & $\text{StuB} \wedge \text{StuB}$ \\ 
+    \hline
+    $\forall x \text{Stu}(x) \rightarrow \text{Per}(x)$ & $(\text{StuA} \rightarrow \text{PerA})$\\
+    & $\wedge (\text{StuB} \rightarrow \text{PerB})$ \\
+    \hline
+    $\exists x \text{Stu}(x) \wedge \text{Creative}(x)$ & $(\text{StuA} \wedge \text{CreativeA})$\\
+    & $\vee (\text{StuB} \rightarrow \text{CreativeB})$ \\
+    \hline
+\end{tabular}
+
+\Red{Horn clause}
+\fbox{$\forall x_1, \dots, \forall x_n, (a_1 \wedge \dots \wedge a_k) \rightarrow b$}
+$x_1, \dots x_n$ are variables and $a_1, \dots a_k, b$ are atomic formulas which
+contain those variables.
+
+\Green{Substitution} a substitution $\theta$ maps variables to terms and
+$\text{Subst}[\theta, f]$ denotes the result of substitution $\theta$ on $f$.
+
+\Green{Unification} takes two formulas $f$ and $g$ and returns a substitution $\theta$
+which is the most general substitution $\theta$ that makes them equal:
+\fbox{$\text{Unify}[f,g] = \theta$ such that $\text{Subst}[\theta, f] = \text{Subst}[\theta, g]$}.
+$\text{Unify}[f,g]$ returns Fail if no such $\theta$ exists.
+
+\Blue{Modus ponens} by calling
+$\theta = \text{Unify}[\textcolor{blue}{a'_1 \wedge \dots \wedge a'_k}, \textcolor{red}{a_1 \wedge \dots \wedge a_k}]$,
+\fbox{
+    $\frac{\textcolor{blue}{a'_1 \wedge \dots \wedge a'_k}, \forall x_1, \dots, \forall x_n (\textcolor{red}{a_1 \wedge \dots \wedge a_k}) \rightarrow b}
+    {\text{Subst}[\theta, b]}$
+}
+
+\Red{Completeness} Modus ponens is complete for first-order logic with only Horn clauses.
+\Blue{semi-decidability} first-order logic (even restricted to only Horn
+clauses) is semi-deciable.
+\begin{itemize}
+    \item if $KB \models f$, forward inference on complete inference rules will prove $f$ in finite time
+    \item if $KB \nrightmodels f$, no algorithm can show this in finite time
+\end{itemize}
+
+\Red{Resolution rule} by calling $\theta = \text{Unify}[p,q]$,
+\fbox{
+    $\frac{\textcolor{blue}{f_1 \vee \dots \vee f_k} \vee p, \neg q \vee \textcolor{red}{g_1 \vee \dots \vee g_m}}
+    {\text{Subst}[\theta, \textcolor{blue}{f_1 \vee \dots \vee f_k} \vee \textcolor{red}{g_1 \vee \dots \vee g_m}]}$
+}
